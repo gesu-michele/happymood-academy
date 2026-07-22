@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antonio's Job Quest</title>
+  <style>
+    :root{
+      --bg1:#07152f;
+      --bg2:#10285d;
+      --card:#ffffff;
+      --yellow:#ffd84d;
+      --green:#28d17c;
+      --red:#ff5c73;
+      --blue:#52b7ff;
+      --purple:#8c6cff;
+      --ink:#10203f;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(82,183,255,.22), transparent 28%),
+        radial-gradient(circle at 90% 20%, rgba(140,108,255,.24), transparent 30%),
+        linear-gradient(145deg,var(--bg1),var(--bg2));
+      color:white;
+      overflow-x:hidden;
+    }
+    .stars-bg{
+      position:fixed; inset:0; pointer-events:none; opacity:.45;
+      background-image:
+        radial-gradient(circle,#fff 1px,transparent 1.5px),
+        radial-gradient(circle,#fff 1px,transparent 1.5px);
+      background-position:0 0,24px 24px;
+      background-size:48px 48px;
+    }
+    .app{max-width:1250px;margin:0 auto;padding:18px}
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      font-weight:900; letter-spacing:.3px; font-size:clamp(20px,2.8vw,34px);
+    }
+    .logo{
+      width:54px;height:54px;border-radius:18px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--yellow),#ff9f43);
+      color:#152143;font-size:30px;
+      box-shadow:0 10px 30px rgba(0,0,0,.28);
+    }
+    .stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .pill{
+      background:rgba(255,255,255,.13);
+      border:1px solid rgba(255,255,255,.18);
+      backdrop-filter:blur(10px);
+      border-radius:18px;padding:10px 14px;font-weight:900;
+      min-width:112px;text-align:center;
+      box-shadow:0 10px 24px rgba(0,0,0,.14);
+    }
+    .pill strong{display:block;font-size:22px}
+    .panel{
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.15);
+      border-radius:28px;
+      box-shadow:0 18px 60px rgba(0,0,0,.25);
+      padding:18px;
+      backdrop-filter:blur(14px);
+    }
+    .intro{
+      text-align:center;max-width:760px;margin:6vh auto 0;
+      padding:32px;
+    }
+    .intro h1{font-size:clamp(38px,7vw,72px);margin:4px 0 10px;line-height:1}
+    .intro p{font-size:clamp(18px,2.2vw,26px);opacity:.92}
+    .name-row{display:flex;gap:10px;max-width:520px;margin:24px auto;flex-wrap:wrap}
+    input{
+      flex:1;min-width:220px;border:0;border-radius:18px;padding:16px 18px;
+      font-size:20px;font-weight:800;color:var(--ink);outline:none;
+    }
+    button{
+      border:0;border-radius:18px;padding:15px 20px;font-size:18px;font-weight:900;
+      cursor:pointer;transition:.18s transform,.18s filter,.18s box-shadow;
+    }
+    button:hover{transform:translateY(-2px);filter:brightness(1.04)}
+    button:active{transform:translateY(1px) scale(.98)}
+    .primary{
+      background:linear-gradient(135deg,var(--yellow),#ff9f43);color:#162447;
+      box-shadow:0 10px 24px rgba(255,184,55,.35);
+    }
+    .secondary{background:#fff;color:var(--ink)}
+    .danger{background:linear-gradient(135deg,#ff7f8f,var(--red));color:white}
+    .hidden{display:none!important}
+    .challenge{text-align:center}
+    .mission{
+      display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
+      background:white;color:var(--ink);border-radius:24px;padding:16px 18px;margin-bottom:16px;
+    }
+    .mission small{display:block;text-transform:uppercase;letter-spacing:1.4px;font-weight:900;color:#6e7b97}
+    .word{
+      font-size:clamp(34px,6vw,74px);font-weight:1000;line-height:1;margin-top:5px;
+      color:#132657;
+    }
+    .repeat{
+      min-width:190px;background:linear-gradient(135deg,var(--blue),#4772ff);color:white;
+      box-shadow:0 10px 22px rgba(70,116,255,.25)
+    }
+    .teacher-cue{
+      margin:0 0 16px;
+      background:rgba(255,216,77,.14);border:1px solid rgba(255,216,77,.35);
+      padding:11px 15px;border-radius:16px;font-weight:800;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(130px,1fr));
+      gap:14px;
+    }
+    .job-card{
+      background:var(--card);color:var(--ink);border-radius:24px;
+      padding:14px 10px;min-height:160px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      border:4px solid transparent;box-shadow:0 10px 22px rgba(0,0,0,.18);
+      user-select:none;
+    }
+    .job-card .emoji{font-size:72px;filter:drop-shadow(0 5px 5px rgba(0,0,0,.12))}
+    .job-card .label{font-size:18px;font-weight:1000;margin-top:6px}
+    .job-card.correct{border-color:var(--green);animation:pop .35s ease}
+    .job-card.wrong{border-color:var(--red);animation:shake .35s ease}
+    @keyframes pop{50%{transform:scale(1.08)}}
+    @keyframes shake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
+    .floating-score{
+      position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);
+      font-size:clamp(40px,8vw,90px);font-weight:1000;color:var(--yellow);
+      text-shadow:0 5px 0 #e26715,0 12px 35px rgba(0,0,0,.45);
+      pointer-events:none;opacity:0;z-index:10;
+    }
+    .floating-score.show{animation:scoreBurst .8s ease}
+    @keyframes scoreBurst{
+      0%{opacity:0;transform:translate(-50%,-20%) scale(.5)}
+      35%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+      100%{opacity:0;transform:translate(-50%,-90%) scale(.9)}
+    }
+    .result{text-align:center;padding:34px}
+    .result h2{font-size:clamp(42px,7vw,82px);margin:0 0 12px}
+    .big-score{font-size:clamp(50px,9vw,100px);font-weight:1000;color:var(--yellow);line-height:1}
+    .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:24px 0}
+    .badge{
+      background:white;color:var(--ink);border-radius:20px;padding:14px 18px;
+      font-weight:1000;font-size:22px;box-shadow:0 10px 24px rgba(0,0,0,.2)
+    }
+    .footer-note{opacity:.75;text-align:center;margin-top:14px;font-size:13px}
+    @media(max-width:900px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .mission{grid-template-columns:1fr}
+      .repeat{width:100%}
+      .topbar{align-items:flex-start;flex-direction:column}
+      .stats{justify-content:flex-start}
+      .job-card{min-height:145px}
+    }
+  </style>
+</head>
+<body>
+  <div class="stars-bg"></div>
+  <div class="floating-score" id="floatingScore">+500</div>
+
+  <main class="app">
+    <section id="startScreen" class="panel intro">
+      <div class="logo" style="margin:auto">🚀</div>
+      <h1>Antonio's Job Quest</h1>
+      <p>Listen, repeat and find the correct job before time runs out!</p>
+      <div class="name-row">
+        <input id="playerName" value="Antonio" maxlength="18" aria-label="Player name" />
+        <button class="primary" id="startBtn">START GAME ▶</button>
+      </div>
+      <p style="font-size:16px">60 seconds · +500 points per correct answer · shield rewards</p>
+    </section>
+
+    <section id="gameScreen" class="hidden">
+      <div class="topbar">
+        <div class="brand"><div class="logo">🎮</div><span id="helloName">Hello, Antonio!</span></div>
+        <div class="stats">
+          <div class="pill">SCORE<strong id="score">0</strong></div>
+          <div class="pill">TIME<strong id="time">60</strong></div>
+          <div class="pill">STREAK<strong id="streak">0</strong></div>
+          <div class="pill">SHIELDS<strong id="shields">🛡️</strong></div>
+        </div>
+      </div>
+
+      <div class="panel challenge">
+        <div class="mission">
+          <div>
+            <small>Listen and choose</small>
+            <div class="word" id="targetWord">DOCTOR</div>
+          </div>
+          <button class="repeat" id="repeatBtn">🔊 HEAR AGAIN</button>
+        </div>
+
+        <div class="teacher-cue" id="teacherCue">Teacher: “Antonio, repeat with me: doctor.”</div>
+        <div class="grid" id="jobGrid"></div>
+        <div class="footer-note">Click the correct picture. The next word starts automatically.</div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="panel result hidden">
+      <div style="font-size:72px">🏆</div>
+      <h2 id="resultTitle">GREAT JOB, ANTONIO!</h2>
+      <div>Your final score</div>
+      <div class="big-score" id="finalScore">0</div>
+      <div class="badges" id="badgeRow"></div>
+      <p id="recordText" style="font-size:22px;font-weight:900"></p>
+      <button class="primary" id="playAgainBtn">PLAY AGAIN 🔁</button>
+    </section>
+  </main>
+
+  <script>
+    const jobs = [
+      {word:"doctor", emoji:"👨‍⚕️"},
+      {word:"teacher", emoji:"👩‍🏫"},
+      {word:"police officer", emoji:"👮"},
+      {word:"firefighter", emoji:"🧑‍🚒"},
+      {word:"chef", emoji:"👨‍🍳"},
+      {word:"pilot", emoji:"👨‍✈️"},
+      {word:"farmer", emoji:"🧑‍🌾"},
+      {word:"artist", emoji:"🎨"},
+      {word:"nurse", emoji:"👩‍⚕️"},
+      {word:"singer", emoji:"🎤"}
+    ];
+
+    let score = 0, streak = 0, timeLeft = 60, current = null, timer = null, locked = false;
+    let player = "Antonio";
+
+    const $ = id => document.getElementById(id);
+    const startScreen = $("startScreen"), gameScreen = $("gameScreen"), resultScreen = $("resultScreen");
+
+    function shuffle(arr){
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function speak(text){
+      if(!("speechSynthesis" in window)) return;
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-US";
+      u.rate = 0.82;
+      u.pitch = 1.02;
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => /English|Samantha|Google US English|Microsoft Zira/i.test(v.name));
+      if(preferred) u.voice = preferred;
+      speechSynthesis.speak(u);
+    }
+
+    function beep(success=true){
+      try{
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = success ? 740 : 190;
+        g.gain.setValueAtTime(.08, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .18);
+        o.start(); o.stop(ctx.currentTime + .18);
+      }catch(e){}
+    }
+
+    function updateStats(){
+      $("score").textContent = score.toLocaleString();
+      $("streak").textContent = streak;
+      const count = Math.max(1, Math.min(5, Math.floor(score/2500)+1));
+      $("shields").textContent = "🛡️".repeat(count);
+    }
+
+    function newRound(){
+      locked = false;
+      const choices = jobs;
+      const previous = current?.word;
+      do { current = choices[Math.floor(Math.random()*choices.length)]; }
+      while(current.word === previous && choices.length > 1);
+
+      $("targetWord").textContent = current.word.toUpperCase();
+      $("teacherCue").textContent = `Teacher: “${player}, repeat with me: ${current.word}.”`;
+
+      const grid = $("jobGrid");
+      grid.innerHTML = "";
+      shuffle(choices).forEach(job => {
+        const card = document.createElement("button");
+        card.className = "job-card";
+        card.innerHTML = `<div class="emoji">${job.emoji}</div><div class="label">${job.word}</div>`;
+        card.addEventListener("click", () => choose(card, job));
+        grid.appendChild(card);
+      });
+
+      setTimeout(() => speak(current.word), 140);
+    }
+
+    function choose(card, job){
+      if(locked || timeLeft <= 0) return;
+      locked = true;
+
+      if(job.word === current.word){
+        streak++;
+        let gain = 500;
+        if(streak % 5 === 0) gain += 1000;
+        score += gain;
+        card.classList.add("correct");
+        beep(true);
+        $("floatingScore").textContent = `+${gain.toLocaleString()}`;
+        $("floatingScore").classList.remove("show");
+        void $("floatingScore").offsetWidth;
+        $("floatingScore").classList.add("show");
+        speak(`Excellent, ${player}! ${current.word}`);
+        updateStats();
+        setTimeout(newRound, 750);
+      } else {
+        streak = 0;
+        card.classList.add("wrong");
+        beep(false);
+        updateStats();
+        speak(`Try again. ${current.word}`);
+        setTimeout(() => { card.classList.remove("wrong"); locked = false; }, 650);
+      }
+    }
+
+    function startGame(){
+      player = $("playerName").value.trim() || "Antonio";
+      score = 0; streak = 0; timeLeft = 60;
+      $("helloName").textContent = `Hello, ${player}!`;
+      $("time").textContent = timeLeft;
+      updateStats();
+      startScreen.classList.add("hidden");
+      resultScreen.classList.add("hidden");
+      gameScreen.classList.remove("hidden");
+      newRound();
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        $("time").textContent = timeLeft;
+        if(timeLeft <= 0) finishGame();
+      },1000);
+    }
+
+    function finishGame(){
+      clearInterval(timer);
+      locked = true;
+      speechSynthesis.cancel();
+      gameScreen.classList.add("hidden");
+      resultScreen.classList.remove("hidden");
+
+      $("resultTitle").textContent = `GREAT JOB, ${player.toUpperCase()}!`;
+      $("finalScore").textContent = score.toLocaleString();
+
+      const key = "antonioJobQuestHighScore";
+      const old = Number(localStorage.getItem(key) || 0);
+      const isRecord = score > old;
+      if(isRecord) localStorage.setItem(key, score);
+
+      $("recordText").textContent = isRecord
+        ? "🎉 NEW PERSONAL RECORD!"
+        : `Personal record: ${Math.max(old,score).toLocaleString()} points`;
+
+      const badgeCount = Math.max(1, Math.min(5, Math.floor(score/2500)+1));
+      $("badgeRow").innerHTML = "";
+      for(let i=0;i<badgeCount;i++){
+        const b = document.createElement("div");
+        b.className = "badge";
+        b.textContent = "🛡️ JOB HERO";
+        $("badgeRow").appendChild(b);
+      }
+
+      speak(`Great job, ${player}! You scored ${score} points.`);
+    }
+
+    $("startBtn").addEventListener("click", startGame);
+    $("repeatBtn").addEventListener("click", () => speak(current?.word || "doctor"));
+    $("playAgainBtn").addEventListener("click", startGame);
+
+    window.speechSynthesis?.getVoices();
+  </script>
+</body>
+</html>
