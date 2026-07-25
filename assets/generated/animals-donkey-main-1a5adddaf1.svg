@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+    <defs>
+      <radialGradient id="bg" cx="35%" cy="25%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eff7ff"/><stop offset="1" stop-color="#d5e6f5"/></radialGradient>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a7b1bd"/><stop offset="1" stop-color="#647180"/></linearGradient>
+      <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0c1b34" flood-opacity=".28"/></filter>
+      <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+    <rect x="10" y="10" width="492" height="492" rx="60" fill="url(#bg)"/>
+    <ellipse cx="256" cy="420" rx="145" ry="28" fill="#1a3455" opacity=".13" filter="url(#soft)"/>
+    <g filter="url(#shadow)"><ellipse cx="260" cy="305" rx="135" ry="105" fill="url(#g)" stroke="#596777" stroke-width="9"/>
+        <ellipse cx="265" cy="190" rx="90" ry="90" fill="#9ba8b5" stroke="#596777" stroke-width="9"/>
+        <path d="M207 125l-24-93c45 5 67 42 65 91zM321 125l28-91c39 15 49 56 30 99z" fill="#9ba8b5" stroke="#596777" stroke-width="9"/>
+        <ellipse cx="265" cy="217" rx="54" ry="40" fill="#d2b597"/><circle cx="237" cy="180" r="12"/><circle cx="296" cy="180" r="12"/>
+        <path d="M250 224q15 15 31 0" fill="none" stroke="#4c3a34" stroke-width="8" stroke-linecap="round"/>
+        <rect x="156" y="354" width="35" height="95" rx="16" fill="#758291"/><rect x="324" y="354" width="35" height="95" rx="16" fill="#758291"/></g></svg>
