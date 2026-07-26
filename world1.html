@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#102c1b">
 <title>Lexiconia · World 1: The Beginning Forest</title>
-<meta name="lexiconia-build" content="lexiconia-world1-block1-corrected-v1">
+<meta name="lexiconia-build" content="lexiconia-world1-block3-stable-v1">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
 :root{
@@ -185,6 +185,57 @@ body::before{content:"";position:fixed;inset:0;background:
 .node.pending,.game-node.pending{border-color:#f0b44d!important;box-shadow:0 0 0 3px rgba(240,180,77,.22),0 10px 25px rgba(0,0,0,.23)}.node.pending .node-status,.game-node.pending .game-stars{color:#ffd96a!important}
 @media(max-width:700px){.asset-shell .asset-fallback{font-size:58px}.color-disc{width:68%}.spell-control{min-width:120px;font-size:15px}.emergency-btn{min-width:145px;font-size:13px}}
 
+
+/* Lexiconia World 1 · Block 3 stability overrides */
+.number-visual{
+  position:relative;display:grid;place-items:center;width:100%;height:100%;
+  min-width:72px;min-height:68px;overflow:hidden;border-radius:18px;
+  background:
+    radial-gradient(circle at 32% 20%,rgba(255,255,255,.96) 0 8%,transparent 9%),
+    linear-gradient(145deg,#ecf8ff 0%,#c9e8ff 48%,#b7d4ff 100%);
+  border:3px solid rgba(61,105,165,.28);
+  box-shadow:inset 0 0 24px rgba(255,255,255,.72),0 12px 24px rgba(13,30,50,.2)
+}
+.number-glyph{
+  display:block;color:#173c75;font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(50px,8vw,104px);font-weight:900;line-height:1;
+  text-shadow:0 3px 0 #fff,0 8px 16px rgba(18,53,95,.22)
+}
+.prompt>.number-visual{width:150px;height:78px;flex:0 0 150px}
+.prompt>.number-visual .number-glyph{font-size:52px}
+.balloon-picture>.number-visual .number-glyph{font-size:44px}
+.memory-back>.number-visual .number-glyph{font-size:54px}
+.number-visual.shadow-image{filter:none!important}
+.image-choice>.number-visual,.balloon-picture>.number-visual,.memory-back>.number-visual{width:100%;height:100%}
+
+.asset-shell,.visual-composite,.color-visual,.number-visual{
+  max-width:100%!important;max-height:100%!important;overflow:hidden!important
+}
+.asset-shell .asset-media,.visual-composite .asset-media{
+  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;object-position:center!important
+}
+.image-choice,.memory-face,.balloon-picture,.prompt{overflow:hidden!important}
+.image-choice>*,
+.memory-back>*,
+.balloon-picture>*{max-width:100%!important;max-height:100%!important}
+
+.emergency-btn{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  min-width:210px;padding:11px 16px
+}
+.emergency-btn:not(.attention){animation:none}
+.emergency-btn.attention{animation:emergencyPulse 1.1s ease-in-out infinite}
+.theme-bottom .emergency-btn{flex:0 0 auto}
+.boss-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:18px}
+.boss-later-note{display:block;margin-top:12px;color:#f4e6bd;font-weight:800}
+@media(max-width:760px){
+  .theme-bottom{flex-wrap:wrap}
+  .theme-bottom .progress-card{order:3;width:100%}
+  .emergency-btn{min-width:160px;font-size:13px}
+  .number-glyph{font-size:64px}
+}
+
 </style>
 </head>
 <body>
@@ -219,7 +270,7 @@ body::before{content:"";position:fixed;inset:0;background:
   <div class="theme-wrap">
     <div class="theme-header"><h1 id="themeTitle">Topic 1: Animals</h1><p id="themeSubtitle">Recover 30 words.</p></div>
     <div id="gameGrid" class="game-grid"></div>
-    <div class="theme-bottom"><button id="backMap" class="back-btn">←</button><div class="progress-card"><strong id="themeProgressText">0 / 12 games</strong><div class="progress-line"><div id="themeProgress" class="progress-fill"></div></div></div><button id="startCurrentGame" class="fantasy-btn">START GAME 1 ➜</button></div>
+    <div class="theme-bottom"><button id="backMap" class="back-btn">←</button><button id="continueThemeLater" class="emergency-btn" type="button">CONTINUE ADVENTURE ➜</button><div class="progress-card"><strong id="themeProgressText">0 / 12 games</strong><div class="progress-line"><div id="themeProgress" class="progress-fill"></div></div></div><button id="startCurrentGame" class="fantasy-btn">START GAME 1 ➜</button></div>
   </div>
 </section>
 
@@ -235,15 +286,15 @@ body::before{content:"";position:fixed;inset:0;background:
       <div class="game-banner"><h1 id="gameTitle">Picture Quest</h1><small id="gameLabel">Topic 1 · Animals</small></div>
       <div id="prompt" class="prompt"></div>
       <div id="answers" class="answers images"></div>
-      <div class="game-footer"><button id="exitGame" class="back-btn">←</button><button id="emergencyNext" class="emergency-btn" type="button" aria-label="Emergency Next">EMERGENCY NEXT ➜</button><div class="round-track"><div id="roundFill" class="round-fill"></div></div><strong id="roundCounter">1 / 10</strong></div>
+      <div class="game-footer"><button id="exitGame" class="back-btn">←</button><button id="emergencyNext" class="emergency-btn" type="button" aria-label="Continue Adventure">CONTINUE ADVENTURE ➜</button><div class="round-track"><div id="roundFill" class="round-fill"></div></div><strong id="roundCounter">1 / 10</strong></div>
     </main>
-    <aside class="help-panel"><h3>HOW TO PLAY</h3><p id="helpText">Choose the correct answer.</p><div class="session-stats"><div class="stat"><span>Correct</span><b id="correctStat">0</b></div><div class="stat"><span>Streak</span><b id="streakStat">0</b></div><div class="stat"><span>Score</span><b id="scoreStat">0</b></div><div id="timerStat" class="stat" style="display:none"><span>Time</span><b id="timerValue">45</b></div><div id="heartStat" class="stat" style="display:none"><span>Hearts</span><b id="heartValue">5</b></div></div></aside>
+    <aside class="help-panel"><h3>HOW TO PLAY</h3><p id="helpText">Choose the correct answer.</p><div class="session-stats"><div class="stat"><span>Correct</span><b id="correctStat">0</b></div><div class="stat"><span>Streak</span><b id="streakStat">0</b></div><div class="stat"><span>Score</span><b id="scoreStat">0</b></div><div id="timerStat" class="stat" style="display:none"><span>Time</span><b id="timerValue">45</b></div><div id="heartStat" class="stat" style="display:none"><span>Hearts</span><b id="heartValue">10</b></div></div></aside>
   </div>
 </section>
 
 <section id="bossScreen" class="screen boss-screen">
   <div class="particles"></div>
-  <div class="boss-intro"><div class="boss-card"><div class="guardian">🌿</div><h1>MINI BOSS</h1><h2 id="bossName">Guardian of Animals</h2><p>Use everything you learned. Recover all 30 words and restore the crystal.</p><p style="font-size:27px">❤️ ❤️ ❤️ ❤️ ❤️</p><button id="startBoss" class="fantasy-btn gold">START MINI BOSS ➜</button></div></div>
+  <div class="boss-intro"><div class="boss-card"><div class="guardian">🌿</div><h1>MINI BOSS</h1><h2 id="bossName">Guardian of Animals</h2><p>Use everything you learned. Recover all 30 words and restore the crystal.</p><p id="bossHeartPreview" style="font-size:27px" aria-label="10 hearts">❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️</p><div class="boss-actions"><button id="startBoss" class="fantasy-btn gold">START MINI BOSS ➜</button><button id="continueBossLater" class="emergency-btn" type="button">CONTINUE ADVENTURE ➜</button></div><small class="boss-later-note">You can come back later.</small></div></div>
 </section>
 
 <section id="themeCompleteScreen" class="screen forest-bg">
@@ -253,7 +304,7 @@ body::before{content:"";position:fixed;inset:0;background:
 
 <section id="partCompleteScreen" class="screen forest-bg">
   <div class="particles"></div>
-  <div class="complete-wrap"><div class="complete-card"><div style="font-size:105px">🏆</div><h1>THE THIRD PATH IS RESTORED!</h1><p style="font-size:22px">You recovered 450 words across fifteen themes.</p><p>More paths in The Beginning Forest will open in the next chapter.</p><button id="returnMapFinal" class="fantasy-btn gold">RETURN TO WORLD MAP</button></div></div>
+  <div class="complete-wrap"><div class="complete-card"><div style="font-size:105px">🏆</div><h1>THE BEGINNING FOREST IS RESTORED!</h1><p style="font-size:22px">You recovered 600 words across twenty themes.</p><p>The final forest challenge will open in the next chapter.</p><button id="returnMapFinal" class="fantasy-btn gold">RETURN TO WORLD MAP</button></div></div>
 </section>
 
 <div id="feedback" class="feedback"><div class="feedback-card"><div id="feedbackIcon" style="font-size:72px">✨</div><h2 id="feedbackTitle">Great!</h2><p id="feedbackText"></p></div></div>
@@ -280,6 +331,29 @@ const GAME_DEFS = [
  {name:"Word Puzzle",icon:"🧩",help:"Put the letters in the correct order.",mode:"puzzle"},
  {name:"Mini Boss",icon:"👑",help:"A mixed challenge with all 30 words.",mode:"boss"}
 ];
+
+const ADAPTIVE_GAME_TEN = {
+ food:{name:"Food Finder",icon:"🍽️",help:"Look at the picture. Choose the correct food or drink.",mode:"visual"},
+ colors:{name:"Color Splash",icon:"🎨",help:"Look at the color. Choose its name.",mode:"visual"},
+ numbers:{name:"Quick Number",icon:"🔢",help:"Look at the number. Choose its name.",mode:"visual"},
+ family:{name:"Family Finder",icon:"👨‍👩‍👧",help:"Look at the picture. Choose the correct family word.",mode:"visual"},
+ house:{name:"Home Finder",icon:"🏠",help:"Look at the picture. Choose the correct home word.",mode:"visual"},
+ body:{name:"Body Match",icon:"🖐️",help:"Look at the picture. Choose the body word.",mode:"visual"},
+ feelings:{name:"Emotion Match",icon:"😊",help:"Look at the face or situation. Choose the feeling.",mode:"visual"},
+ school:{name:"School Finder",icon:"🏫",help:"Look at the picture. Choose the school word.",mode:"visual"},
+ jobs:{name:"Job Finder",icon:"👷",help:"Look at the person. Choose the job.",mode:"visual"},
+ weather:{name:"Weather Match",icon:"🌦️",help:"Look at the weather. Choose the correct word.",mode:"visual"}
+};
+function gameDef(ti,gi){
+ const base=GAME_DEFS[gi];
+ if(gi===9){
+   const alt=ADAPTIVE_GAME_TEN[THEMES[ti]?.id];
+   if(alt)return {...base,...alt}
+ }
+ return base
+}
+function canUseShadow(ti){return !ADAPTIVE_GAME_TEN[THEMES[ti]?.id]}
+
 const PROFILE_KEY="lexiconia.sprint1.profiles.v1";
 const ACTIVE_KEY="lexiconia.active.profile.v1";
 const WORLD_KEY="lexiconia.world1.fiveThemes.v1";
@@ -294,7 +368,7 @@ if(!activeProfile){
   try{const ps=JSON.parse(localStorage.getItem(PROFILE_KEY)||"[]");activeProfile=ps.sort((a,b)=>(b.lastPlayed||0)-(a.lastPlayed||0))[0]||null}catch(e){}
 }
 const heroId=activeProfile?.id||slug((activeProfile?.name||"Hero")+"-"+(activeProfile?.birthYear||""));
-const defaultSave={themeIndex:0,gameIndex:0,completed:Array.from({length:THEMES.length},()=>[]),pending:Array.from({length:THEMES.length},()=>[]),themeComplete:Array(THEMES.length).fill(false),themePending:Array(THEMES.length).fill(false),xp:0,gems:0,gold:0,hearts:5,mastery:{},lastPlayed:Date.now()};
+const defaultSave={themeIndex:0,gameIndex:0,completed:Array.from({length:THEMES.length},()=>[]),pending:Array.from({length:THEMES.length},()=>[]),themeComplete:Array(THEMES.length).fill(false),themePending:Array(THEMES.length).fill(false),xp:0,gems:0,gold:0,hearts:10,mastery:{},lastPlayed:Date.now()};
 let save={...defaultSave};
 try{
  const all=JSON.parse(localStorage.getItem(WORLD_KEY)||"{}"),old=all[heroId]||{};
@@ -347,6 +421,7 @@ function assetHTML(a,cls=""){
  return `<span class="asset-shell ${cls}"><span class="asset-fallback" aria-hidden="true">${safeEmoji}</span>${src?`<img class="asset-media" src="${src}" alt="" draggable="false" data-fallback="${fb}" data-emoji="${safeEmoji}" onload="imageLoaded(this)" onerror="imageFallback(this)">`:""}</span>`;
 }
 function imgHTML(w,cls=""){
+ if(Number.isFinite(w.value)){return `<span class="number-visual ${cls}" role="img" aria-label="${w.word}"><span class="number-glyph">${w.value}</span></span>`}
  if(w.swatch){return `<span class="color-visual ${cls}" style="--swatch:${w.swatch}" role="img" aria-label="${w.word}"><span class="color-disc"></span></span>`}
  if(Array.isArray(w.parts)&&w.parts.length){return `<span class="visual-composite ${cls}">${w.parts.map((p,i)=>assetHTML(p,`visual-part part-${i+1}`)).join("")}</span>`}
  return assetHTML(w,cls);
@@ -379,25 +454,34 @@ function renderMap(){
 }
 function firstIncomplete(ti){
  const c=save.completed[ti]||[],p=save.pending[ti]||[];
- for(let i=0;i<12;i++)if(!c.includes(i)&&!p.includes(i))return i;
+ for(let i=0;i<11;i++)if(!c.includes(i)&&!p.includes(i))return i;
+ for(let i=0;i<11;i++)if(p.includes(i)&&!c.includes(i))return i;
+ if(!c.includes(11))return 11;
  return 11
 }
 function openTheme(){
  currentGame=firstIncomplete(currentTheme);save.themeIndex=Math.max(save.themeIndex,currentTheme);save.gameIndex=currentGame;persist();const t=THEMES[currentTheme];
  $("themeTitle").textContent=`Topic ${currentTheme+1}: ${t.name}`;$("themeSubtitle").textContent=`Recover 30 ${t.name.toLowerCase()} words.`;
  const grid=$("gameGrid");grid.innerHTML="";
- GAME_DEFS.forEach((g,i)=>{
-   const done=(save.completed[currentTheme]||[]).includes(i),pending=(save.pending[currentTheme]||[]).includes(i),unlocked=i<=currentGame||done||pending;
-   const isCurrent=i===currentGame&&!done&&!pending;
+ const completedHere=save.completed[currentTheme]||[],pendingHere=save.pending[currentTheme]||[];
+ const bossReady=Array.from({length:11},(_,j)=>j).every(j=>completedHere.includes(j));
+ GAME_DEFS.forEach((base,i)=>{
+   const g=gameDef(currentTheme,i);
+   const done=completedHere.includes(i),pending=pendingHere.includes(i);
+   const unlocked=i===11?(bossReady||done||pending):(i<=currentGame||done||pending);
+   const isCurrent=i===currentGame&&!done;
    const b=document.createElement("button");b.className=`game-node ${done?"complete":pending?"pending":""} ${isCurrent?"current":""} ${!unlocked?"locked":""}`;b.disabled=!unlocked;
    b.innerHTML=`<span class="game-num">${i+1}</span><div class="game-icon">${g.icon}</div><div class="game-name">${g.name}</div><div class="game-stars">${done?"★★★":pending?"LATER":"☆☆☆"}</div>`;
    b.onclick=()=>{if(unlocked){currentGame=i;beginSelectedGame()}};
    grid.appendChild(b)
  });
- const n=(save.completed[currentTheme]||[]).length,pn=(save.pending[currentTheme]||[]).length;
+ const n=completedHere.length,pn=pendingHere.length;
  $("themeProgressText").textContent=pn?`${n} complete · ${pn} pending`:`${n} / 12 games complete`;
  $("themeProgress").style.width=(n/12*100)+"%";
- $("startCurrentGame").textContent=currentGame===11?"START MINI BOSS ➜":`START GAME ${currentGame+1} ➜`;
+ const activeDef=gameDef(currentTheme,currentGame);
+ $("startCurrentGame").textContent=currentGame===11?"START MINI BOSS ➜":`START ${activeDef.name.toUpperCase()} ➜`;
+ $("startCurrentGame").disabled=currentGame===11&&!bossReady&&!completedHere.includes(11)&&!pendingHere.includes(11);
+ $("continueThemeLater").disabled=!!save.themeComplete[currentTheme];
  updateHud();show("themeScreen");startMusic("forest")
 }
 async function preloadTheme(ti){
@@ -417,18 +501,26 @@ async function preloadTheme(ti){
 async function beginSelectedGame(){
  sfx();await preloadTheme(currentTheme);
  if(currentGame===11){showBossIntro();return}
- startGame(GAME_DEFS[currentGame].mode)
+ startGame(gameDef(currentTheme,currentGame).mode)
 }
-function showBossIntro(){bossMode=true;startMusic("boss");$("bossName").textContent=`Guardian of ${THEMES[currentTheme].name}`;show("bossScreen")}
+function showBossIntro(){
+ bossMode=true;startMusic("boss");
+ $("bossName").textContent=`Guardian of ${THEMES[currentTheme].name}`;
+ $("bossHeartPreview").textContent="❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️";
+ $("continueBossLater").disabled=false;
+ show("bossScreen")
+}
 function resetSession(mode){
  clearInterval(timerHandle);
- session={mode,round:0,total:mode==="boss"?30:mode==="memory"?8:mode==="spell"?8:mode==="puzzle"?8:mode==="speed"?99:10,correct:0,wrong:0,streak:0,score:0,used:[],hearts:mode==="boss"?5:3,time:45,pairs:null,lock:false,roundErrors:0};
+ session={mode,round:0,total:mode==="boss"?30:mode==="memory"?8:mode==="spell"?8:mode==="puzzle"?8:mode==="speed"?99:10,correct:0,wrong:0,streak:0,score:0,used:[],hearts:mode==="boss"?10:3,time:45,pairs:null,lock:false,roundErrors:0};
  hideEmergencyNext();
 }
 function startGame(mode){
  bossMode=mode==="boss";startMusic(bossMode?"boss":"forest");resetSession(mode);
- $("gameTitle").textContent=GAME_DEFS[bossMode?11:currentGame].name;$("gameLabel").textContent=`Topic ${currentTheme+1} · ${THEMES[currentTheme].name}`;$("helpText").textContent=GAME_DEFS[bossMode?11:currentGame].help;
- $("timerStat").style.display=mode==="speed"?"flex":"none";$("heartStat").style.display=mode==="boss"?"flex":"none";$("heartValue").textContent=session.hearts;show("gameScreen");buildMiniProgress();nextRound();
+ const g=gameDef(currentTheme,bossMode?11:currentGame);
+ $("gameTitle").textContent=g.name;$("gameLabel").textContent=`Topic ${currentTheme+1} · ${THEMES[currentTheme].name}`;$("helpText").textContent=g.help;
+ $("timerStat").style.display=mode==="speed"?"flex":"none";$("heartStat").style.display=mode==="boss"?"flex":"none";$("heartValue").textContent=session.hearts;
+ $("emergencyNext").disabled=false;$("emergencyNext").classList.remove("attention");show("gameScreen");buildMiniProgress();nextRound();
  if(mode==="speed"){timerHandle=setInterval(()=>{session.time--;$("timerValue").textContent=session.time;if(session.time<=0){clearInterval(timerHandle);finishGame(session.correct>=6)}},1000)}
 }
 function weakWord(){
@@ -465,28 +557,32 @@ function showChoices(items,type,target,onPick,extraClass=""){
  })
 }
 function hideEmergencyNext(){
- const b=$("emergencyNext");if(b){b.classList.remove("show");b.disabled=false}
+ const b=$("emergencyNext");if(b){b.classList.remove("attention");b.disabled=false}
 }
 function showEmergencyNext(){
- const b=$("emergencyNext");if(b&&!b.classList.contains("show")){b.classList.add("show");$("lyraTip").textContent="You can save this challenge for later."}
+ const b=$("emergencyNext");if(b){b.classList.add("attention");b.disabled=false;$("lyraTip").textContent="You can continue now and return to this theme later."}
 }
 function useEmergencyNext(){
- if(!session||session.lock)return;
- session.lock=true;clearInterval(timerHandle);speechSynthesis?.cancel();hideEmergencyNext();
- const ti=currentTheme,gi=currentGame;
+ const ti=currentTheme;
+ if(save.themeComplete[ti]){renderMap();return}
+ clearInterval(timerHandle);speechSynthesis?.cancel();
+ ["emergencyNext","continueThemeLater","continueBossLater"].forEach(id=>{const b=$(id);if(b)b.disabled=true});
+ const gi=Number.isInteger(currentGame)?currentGame:firstIncomplete(ti);
  save.pending[ti]=save.pending[ti]||[];
  if(!save.pending[ti].includes(gi))save.pending[ti].push(gi);
- if(session.mode==="boss"||gi===11){
-   save.themePending[ti]=true;
-   if(ti<THEMES.length-1){save.themeIndex=Math.max(save.themeIndex,ti+1);save.gameIndex=0}
+ save.themePending[ti]=true;
+ if(ti<THEMES.length-1){
+   save.themeIndex=Math.max(save.themeIndex,ti+1);
+   save.gameIndex=0;
  }else{
+   save.themeIndex=Math.max(save.themeIndex,ti);
    save.gameIndex=firstIncomplete(ti);
  }
- persist();
- showFeedback("SAVED FOR LATER","This challenge is pending. No full reward was awarded.",false,()=>{
+ persist();updateHud();
+ showFeedback("SAVED FOR LATER","This theme is pending. You can return whenever you are ready.",false,()=>{
    bossMode=false;startMusic("forest");
-   if(session.mode==="boss"||gi===11){currentTheme=Math.min(save.themeIndex,THEMES.length-1);renderMap()}
-   else{currentGame=firstIncomplete(ti);openTheme()}
+   ["emergencyNext","continueThemeLater","continueBossLater"].forEach(id=>{const b=$(id);if(b)b.disabled=false});
+   currentTheme=Math.min(save.themeIndex,THEMES.length-1);renderMap()
  })
 }
 function standardPick(button,item,target){
@@ -513,7 +609,7 @@ function nextRound(){
  hideEmergencyNext();session.roundErrors=0;updateSession();const mode=session.mode;
  if(mode==="picture")renderPicture(false);
  else if(mode==="listen")renderPicture(true);
- else if(mode==="word")renderWord();
+ else if(mode==="word"||mode==="visual")renderWord();
  else if(mode==="memory")renderMemory();
  else if(mode==="speed")renderPicture(Math.random()<.5);
  else if(mode==="balloon")renderBalloon();
@@ -603,11 +699,18 @@ function renderTF(){
  [...a.querySelectorAll(".tf-btn")].forEach((b,i)=>b.onclick=()=>{const ans=i===0;if(ans===truth){b.classList.add("correct");correctAnswer(target);setTimeout(()=>advanceRound(),550)}else{b.classList.add("wrong");wrongAnswer(target);setTimeout(()=>b.classList.remove("wrong"),350)}})
 }
 function renderShadow(){
+ if(!canUseShadow(currentTheme)){renderWord();return}
  const target=nextTarget();setPrompt(imgHTML(target,"shadow-image"));showChoices(shuffle([target,...distractors(target,3)]),"word",target,(b,i)=>standardPick(b,i,target))
 }
 function renderBossRound(){
- const types=["picture","listen","word","missing","truefalse","shadow"];const type=types[session.round%types.length];
- if(type==="picture")renderPicture(false);else if(type==="listen")renderPicture(true);else if(type==="word")renderWord();else if(type==="missing")renderMissing();else if(type==="truefalse")renderTF();else renderShadow()
+ const types=canUseShadow(currentTheme)?["picture","listen","word","missing","truefalse","shadow"]:["picture","listen","word","missing","truefalse","visual"];
+ const type=types[session.round%types.length];
+ if(type==="picture")renderPicture(false);
+ else if(type==="listen")renderPicture(true);
+ else if(type==="word"||type==="visual")renderWord();
+ else if(type==="missing")renderMissing();
+ else if(type==="truefalse")renderTF();
+ else renderShadow()
 }
 function finishGame(success){
  clearInterval(timerHandle);hideEmergencyNext();
@@ -633,7 +736,8 @@ function showFeedback(title,text,good,cb){
 }
 function showToast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1200)}
 $("continueAdventure").onclick=()=>{sfx();if(save.themeComplete.filter(Boolean).length===THEMES.length){show("partCompleteScreen");return}currentTheme=save.themeIndex;openTheme()};
-$("backMap").onclick=renderMap;$("startCurrentGame").onclick=beginSelectedGame;$("exitGame").onclick=()=>{clearInterval(timerHandle);speechSynthesis?.cancel();hideEmergencyNext();openTheme()};$("emergencyNext").onclick=useEmergencyNext;
+$("backMap").onclick=renderMap;$("startCurrentGame").onclick=beginSelectedGame;$("exitGame").onclick=()=>{clearInterval(timerHandle);speechSynthesis?.cancel();hideEmergencyNext();openTheme()};
+$("emergencyNext").onclick=useEmergencyNext;$("continueThemeLater").onclick=useEmergencyNext;$("continueBossLater").onclick=useEmergencyNext;
 $("startBoss").onclick=()=>startGame("boss");
 $("continueTheme").onclick=()=>{if(save.themeComplete.filter(Boolean).length===THEMES.length){show("partCompleteScreen")}else{currentTheme=save.themeIndex;renderMap()}};
 $("returnMapFinal").onclick=renderMap;
