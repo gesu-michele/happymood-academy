@@ -1,0 +1,24 @@
+Lexiconia: The Language Quest
+World 2: Water World
+Theme 01: Plants & Flowers
+Build ID: lexiconia-world2-water-world-theme01-v1
+Generated: 2026-08-07
+
+INCLUDED
+- Patched World 1 connection button
+- Water World map with 20 Theme positions
+- Theme 01 independent HTML
+- 30 approved vocabulary items
+- 12 games
+- Memory Grove: 30 cards / 15 pairs
+- Selective Shadow Match with dedicated silhouettes
+- Mini Boss: 10 hearts and all 30 words
+- Continue Adventure / Pending
+- World 1 completion gate
+- Per-profile localStorage progression
+
+NOT INCLUDED
+- Themes 02–20
+- Water World final Big Boss
+- New Water World music
+- Cloud backend

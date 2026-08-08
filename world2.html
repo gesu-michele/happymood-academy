@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#063f67">
+<meta name="lexiconia-build" content="lexiconia-world2-water-world-theme01-v1">
+<title>Lexiconia · World 2: Water World</title>
+<style>
+:root{
+  --gold:#ffd55c;--gold2:#b87009;--aqua:#35d7ee;--blue:#0875b9;--deep:#042f56;
+  --navy:#061b37;--panel:rgba(5,30,56,.9);--line:rgba(255,215,92,.72);
+  --shadow:0 20px 55px rgba(0,0,0,.48)
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Trebuchet MS,Segoe UI,Arial,sans-serif;color:#fff;background:#031b31}button{font:inherit;cursor:pointer}button:disabled{cursor:not-allowed}
+body::before{content:"";position:fixed;inset:-18px;background:linear-gradient(rgba(0,67,112,.28),rgba(1,19,42,.78)),url("assets/world2/water-world-map.png") center/cover no-repeat;filter:blur(4px) saturate(1.08) brightness(.74);transform:scale(1.04);z-index:-3}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 34%,rgba(39,211,238,.18),transparent 36%),linear-gradient(180deg,rgba(0,37,75,.06),rgba(0,9,26,.62));z-index:-2;pointer-events:none}
+#app{min-height:100vh;position:relative;overflow-x:hidden}.bubbles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1}.bubbles i{position:absolute;bottom:-70px;width:var(--s);height:var(--s);border:2px solid rgba(210,250,255,.65);border-radius:50%;box-shadow:inset 0 0 10px rgba(255,255,255,.38);animation:rise var(--d) linear infinite;left:var(--x);opacity:.55}@keyframes rise{to{transform:translateY(-120vh) translateX(var(--drift));opacity:.05}}
+.topbar{position:fixed;z-index:50;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;pointer-events:none}.profile,.hud,.actions{pointer-events:auto}.profile{display:flex;align-items:center;gap:11px;padding:7px 15px 7px 7px;border:2px solid var(--line);border-radius:20px;background:linear-gradient(160deg,rgba(5,43,76,.97),rgba(3,22,47,.96));box-shadow:var(--shadow)}.profile img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid var(--gold)}.profile-name{font-weight:900;font-size:18px}.profile-rank{font-size:12px;color:#c9efff;margin-top:4px}.hud{display:flex;gap:8px;align-items:center}.currency{min-width:82px;padding:10px 13px;border:2px solid var(--line);border-radius:18px;background:rgba(3,24,51,.95);font-weight:900;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,.36)}.actions{display:flex;gap:7px}.round{width:46px;height:46px;border-radius:50%;border:2px solid var(--line);background:linear-gradient(#156a9f,#06375e);color:#fff;font-size:21px;box-shadow:0 9px 20px rgba(0,0,0,.35)}
+.wrap{width:min(1510px,97vw);margin:auto;padding:100px 16px 28px}.title{text-align:center;width:min(850px,92vw);margin:0 auto 18px;padding:13px 28px;border:4px solid var(--gold2);border-radius:28px;background:linear-gradient(180deg,rgba(9,130,190,.96),rgba(4,58,111,.97));box-shadow:var(--shadow),inset 0 0 28px rgba(255,255,255,.15)}.title h1{font-family:Georgia,serif;color:#fff1a1;text-shadow:0 4px 0 #805007,0 8px 18px #00162f;font-size:clamp(38px,5.4vw,76px);margin:0}.title h2{font-family:Georgia,serif;font-size:clamp(24px,3vw,42px);margin:2px 0;color:#fff}.title p{margin:7px 0 0;color:#d9f7ff;font-size:clamp(14px,1.5vw,19px)}
+.map{position:relative;padding:24px;border:2px solid var(--line);border-radius:30px;background:linear-gradient(180deg,rgba(3,44,74,.78),rgba(2,26,54,.9));box-shadow:var(--shadow);backdrop-filter:blur(7px)}.path{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:24px 18px;position:relative}.path::before{content:"";position:absolute;inset:8% 5%;background:repeating-linear-gradient(90deg,rgba(103,244,255,.94) 0 12px,transparent 12px 24px) left 16%/100% 5px no-repeat,repeating-linear-gradient(90deg,rgba(103,244,255,.94) 0 12px,transparent 12px 24px) left 50%/100% 5px no-repeat,repeating-linear-gradient(90deg,rgba(103,244,255,.94) 0 12px,transparent 12px 24px) left 84%/100% 5px no-repeat;filter:drop-shadow(0 0 8px #3be3ff);opacity:.55;pointer-events:none}.node{position:relative;z-index:1;min-height:202px;padding:20px 10px 14px;border-radius:27px;border:3px solid #d7af42;background:linear-gradient(165deg,rgba(219,252,255,.97),rgba(133,218,232,.96));color:#082b43;box-shadow:0 14px 30px rgba(0,0,0,.36),inset 0 0 24px rgba(255,255,255,.65);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;transition:.18s}.node:hover:not(:disabled){transform:translateY(-4px);filter:brightness(1.07)}.node.current{outline:7px solid rgba(69,239,255,.33);box-shadow:0 0 36px rgba(74,230,255,.9),0 14px 30px rgba(0,0,0,.38)}.node.complete{background:linear-gradient(165deg,#f6ffd8,#9be2b5)}.node.pending{border-color:#ffbd4c;background:linear-gradient(165deg,#fff5cb,#badff1)}.node.locked{filter:grayscale(.7) brightness(.52);border-color:#7b8c96}.num{position:absolute;top:-18px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:21px;font-weight:900;background:linear-gradient(#22a4d4,#084d8b);border:3px solid var(--gold);box-shadow:0 5px 14px rgba(0,0,0,.35)}.icon{font-size:58px;filter:drop-shadow(0 6px 7px rgba(0,0,0,.2))}.node-name{font:900 19px Georgia,serif;text-align:center;line-height:1.08}.status{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:900;color:#2f5971}.node.complete::after{content:"✓";position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;background:#2ca451;font-weight:900}
+.bottom{display:flex;gap:16px;align-items:center;margin-top:18px}.progress{flex:1;padding:15px 20px;border:2px solid var(--line);border-radius:20px;background:rgba(3,25,51,.93);box-shadow:0 12px 24px rgba(0,0,0,.32)}.bar{height:18px;margin-top:9px;border-radius:999px;border:2px solid #71602e;background:#03111f;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#30d6e8,#76ef8e,#ffe459);transition:.4s}.btn{border:3px solid var(--gold);border-radius:20px;padding:16px 25px;color:#fff;font-size:clamp(18px,2vw,28px);font-weight:900;background:linear-gradient(#39b9d2,#0871aa);box-shadow:0 11px 0 #054b77,0 17px 28px rgba(0,0,0,.4);text-shadow:0 2px 2px #00253f;transition:.16s}.btn:hover{transform:translateY(-2px);filter:brightness(1.1)}.btn.gold{background:linear-gradient(#ffba2a,#c97708);box-shadow:0 11px 0 #754004,0 17px 28px rgba(0,0,0,.4)}.back{position:fixed;left:15px;bottom:17px;z-index:45;padding:12px 18px;border-radius:17px;border:2px solid var(--line);background:rgba(3,27,54,.94);color:#fff;font-weight:900}.toast{position:fixed;left:50%;bottom:26px;z-index:100;transform:translateX(-50%);padding:14px 20px;border-radius:16px;border:2px solid var(--gold);background:#061e37;font-weight:900;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
+.gate{display:none;min-height:100vh;place-items:center;padding:30px}.gate.show{display:grid}.gate-card{width:min(700px,92vw);text-align:center;padding:34px;border:4px solid var(--gold);border-radius:30px;background:rgba(3,27,54,.94);box-shadow:var(--shadow)}.gate-card h1{font:900 clamp(40px,7vw,78px) Georgia,serif;color:#8ceeff;margin:0 0 10px}.gate-card p{font-size:20px;line-height:1.45}
+@media(max-width:1050px){.path{grid-template-columns:repeat(4,1fr)}.path::before{display:none}.node{min-height:185px}}
+@media(max-width:760px){.wrap{padding-top:88px}.profile-rank,.currency .label{display:none}.profile img{width:40px;height:40px}.currency{min-width:auto;padding:8px}.path{grid-template-columns:repeat(2,1fr);gap:22px 12px}.node{min-height:170px}.bottom{flex-direction:column}.progress{width:100%}.btn{width:100%}.title{padding:10px 16px}}
+</style>
+</head>
+<body>
+<div id="bubbles" class="bubbles"></div>
+<div id="gate" class="gate"><div class="gate-card"><div style="font-size:82px">🔒🌊</div><h1>Water World</h1><p>Complete all 20 Themes in World 1 to open this portal.</p><button id="gateBack" class="btn gold">RETURN TO WORLD 1</button></div></div>
+<div id="app">
+  <div class="topbar">
+    <div class="profile"><img src="assets/world2/lyra.jpg" alt="Lyra"><div><div id="heroName" class="profile-name">Hero</div><div id="heroRank" class="profile-rank">Water Explorer</div></div></div>
+    <div class="hud">
+      <div class="currency">⭐ <b id="xp">0</b></div>
+      <div class="currency">💎 <b id="gems">0</b></div>
+      <div class="currency">🪙 <b id="gold">0</b></div>
+      <div class="actions"><button id="music" class="round" aria-label="Music">♫</button><button id="full" class="round" aria-label="Fullscreen">⛶</button></div>
+    </div>
+  </div>
+  <main class="wrap">
+    <header class="title"><h1>WORLD 2</h1><h2>Water World</h2><p>Follow the current and recover the next Words of Power.</p></header>
+    <section class="map"><div id="path" class="path"></div></section>
+    <section class="bottom"><div class="progress"><strong>Your Progress in Water World</strong><span id="count" style="float:right;font-weight:900">0 / 20 Themes</span><div class="bar"><div id="fill" class="fill"></div></div></div><button id="continue" class="btn">CONTINUE ADVENTURE ➜</button></section>
+  </main>
+  <button id="backWorld1" class="back">← WORLD 1</button>
+  <div id="toast" class="toast"></div>
+  <audio id="musicTrack" src="audio/forest.mp3" loop preload="auto"></audio>
+</div>
+<script>
+const THEMES=[
+ {name:"Plants & Flowers",icon:"🌸",file:"themes/world2/01-plants-flowers.html",available:true},
+ {name:"Places in Town",icon:"🏙️"},{name:"Sports",icon:"⚽"},{name:"Hobbies",icon:"🎮"},{name:"Musical Instruments",icon:"🎵"},
+ {name:"Toys",icon:"🎁"},{name:"Days & Months",icon:"📅"},{name:"Time",icon:"⏰"},{name:"Prepositions of Place",icon:"📍"},{name:"Everyday Actions",icon:"🚶"},
+ {name:"Action Verbs",icon:"🤸"},{name:"Shapes",icon:"🔺"},{name:"Opposites",icon:"🌊"},{name:"Adjectives",icon:"✨"},{name:"Shopping",icon:"🛒"},
+ {name:"Celebrations",icon:"🎂"},{name:"Technology",icon:"💻"},{name:"Wild Animals",icon:"🐾"},{name:"Countries & Flags",icon:"🌎"},{name:"Review World",icon:"🚀"}
+];
+const PROFILE_KEY="lexiconia.sprint1.profiles.v1",ACTIVE_KEY="lexiconia.active.profile.v1",W1_KEY="lexiconia.world1.fiveThemes.v1",W2_KEY="lexiconia.world2.waterWorld.v1";
+const $=id=>document.getElementById(id);const slug=s=>(s||"hero").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-");
+let profile=null;try{profile=JSON.parse(localStorage.getItem(ACTIVE_KEY)||"null")}catch(e){}if(!profile){try{profile=(JSON.parse(localStorage.getItem(PROFILE_KEY)||"[]").sort((a,b)=>(b.lastPlayed||0)-(a.lastPlayed||0))[0])||null}catch(e){}}
+const heroId=profile?.id||slug((profile?.name||"Hero")+"-"+(profile?.birthYear||""));
+function world1Save(){try{return (JSON.parse(localStorage.getItem(W1_KEY)||"{}"))[heroId]||{}}catch(e){return{}}}
+function world1Complete(){const s=world1Save();return Array.isArray(s.themeComplete)&&s.themeComplete.length>=20&&s.themeComplete.slice(0,20).every(Boolean)}
+const defaultW2={themeIndex:0,completed:Array.from({length:20},()=>[]),pending:Array.from({length:20},()=>[]),themeComplete:Array(20).fill(false),themePending:Array(20).fill(false),mastery:{},lastPlayed:Date.now()};let save={...defaultW2};
+try{const all=JSON.parse(localStorage.getItem(W2_KEY)||"{}"),old=all[heroId]||{};save={...defaultW2,...old,mastery:old.mastery||{}};save.completed=Array.from({length:20},(_,i)=>Array.isArray(old.completed?.[i])?old.completed[i]:[]);save.pending=Array.from({length:20},(_,i)=>Array.isArray(old.pending?.[i])?old.pending[i]:[]);save.themeComplete=Array.from({length:20},(_,i)=>!!old.themeComplete?.[i]);save.themePending=Array.from({length:20},(_,i)=>!!old.themePending?.[i])}catch(e){}
+function persist(){save.lastPlayed=Date.now();try{const all=JSON.parse(localStorage.getItem(W2_KEY)||"{}");all[heroId]=save;localStorage.setItem(W2_KEY,JSON.stringify(all))}catch(e){}}
+function economy(){const s=world1Save();return{xp:Number(s.xp)||0,gems:Number(s.gems)||0,gold:Number(s.gold)||0}}
+function rank(xp){if(xp>=20000)return"Tidal Guardian";if(xp>=12000)return"Ocean Pathfinder";if(xp>=7000)return"Coral Ranger";return"Water Explorer"}
+function updateHud(){const e=economy();$("heroName").textContent=profile?.name||"Hero";$("heroRank").textContent=rank(e.xp);$("xp").textContent=e.xp.toLocaleString();$("gems").textContent=e.gems.toLocaleString();$("gold").textContent=e.gold.toLocaleString()}
+function render(){const path=$("path");path.innerHTML="";THEMES.forEach((t,i)=>{const done=save.themeComplete[i],pending=save.themePending[i],unlocked=i<=save.themeIndex&&t.available;const b=document.createElement("button");b.className=`node ${done?"complete":pending?"pending":""} ${i===save.themeIndex&&!done&&t.available?"current":""} ${!unlocked&&!done&&!pending?"locked":""}`;b.disabled=!unlocked&&!done&&!pending;b.innerHTML=`<span class="num">${i+1}</span><span class="icon">${t.icon}</span><span class="node-name">${t.name}</span><span class="status">${done?"Restored":pending?"Pending":unlocked?"Enter":t.available?"Locked":"Coming Soon"}</span>`;b.onclick=()=>{if(t.file&&(unlocked||done||pending))location.href=t.file;else toast("This Theme is being prepared.")};path.appendChild(b)});const n=save.themeComplete.filter(Boolean).length;$("count").textContent=`${n} / 20 Themes`;$("fill").style.width=(n/20*100)+"%";const next=THEMES.findIndex((t,i)=>t.available&&!save.themeComplete[i]);$("continue").textContent=next>=0?`CONTINUE: ${THEMES[next].name.toUpperCase()} ➜`:"NEXT THEME COMING SOON";$("continue").disabled=next<0;$("continue").onclick=()=>{if(next>=0)location.href=THEMES[next].file};updateHud();persist()}
+function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1500)}
+function bubbles(){const box=$("bubbles");for(let i=0;i<38;i++){const b=document.createElement("i");b.style.setProperty("--s",(5+Math.random()*18)+"px");b.style.setProperty("--x",Math.random()*100+"%");b.style.setProperty("--d",(9+Math.random()*15)+"s");b.style.setProperty("--drift",(-55+Math.random()*110)+"px");b.style.animationDelay=(-Math.random()*18)+"s";box.appendChild(b)}}
+let musicOn=true;const track=$("musicTrack");track.volume=.18;$("music").onclick=()=>{musicOn=!musicOn;$("music").textContent=musicOn?"♫":"🔇";if(musicOn)track.play().catch(()=>{});else{track.pause();track.currentTime=0}};document.addEventListener("pointerdown",()=>{if(musicOn&&track.paused)track.play().catch(()=>{})},{once:true});$("full").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});$("backWorld1").onclick=$("gateBack").onclick=()=>location.href="world1.html";
+bubbles();if(!world1Complete()){$("app").style.display="none";$("gate").classList.add("show")}else render();
+</script>
+</body>
+</html>

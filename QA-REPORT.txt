@@ -1,0 +1,53 @@
+LEXICONIA — WORLD 2 / THEME 01 QA REPORT
+Build: lexiconia-world2-water-world-theme01-v1
+Date: 2026-08-07
+
+STATIC PACKAGE VALIDATION
+[PASS] world1.html included and patched.
+[PASS] world2.html included.
+[PASS] independent Theme HTML included.
+[PASS] JavaScript syntax passed Node.js validation in all three HTML files.
+[PASS] No duplicate HTML IDs detected.
+[PASS] 30 approved vocabulary strings detected in the correct order.
+[PASS] 12 approved game definitions detected in the correct order.
+[PASS] 30 primary local visual assets detected.
+[PASS] 13 dedicated Shadow silhouette assets detected.
+[PASS] All 42 SVG files parsed successfully with CairoSVG.
+[PASS] All image and Shadow paths referenced by the Theme exist.
+[PASS] Existing World 1 localStorage key preserved.
+[PASS] New World 2 storage key is independent.
+
+DYNAMIC CHROMIUM VALIDATION
+The pages were executed in Chromium with local assets inlined and a controlled
+localStorage profile representing a student who completed World 1.
+
+[PASS] Water World stays locked without 20/20 World 1 completion.
+[PASS] Water World renders exactly 20 Theme nodes.
+[PASS] Theme 01 is enabled.
+[PASS] Themes 02–20 remain unavailable / Coming Soon.
+[PASS] Existing XP, Gems and Gold are read from the World 1 profile economy.
+[PASS] Plants & Flowers renders exactly 12 game nodes.
+[PASS] Sequential game unlocking works on initial load.
+[PASS] Picture Quest renders 6 loaded visual choices with no word labels.
+[PASS] Memory Grove renders exactly 30 cards / 15 pairs.
+[PASS] Shadow Match uses a dedicated silhouette asset and 4 word choices.
+[PASS] Mini Boss remains locked until games 1–11 are completed.
+[PASS] Mini Boss intro displays 10 hearts.
+[PASS] Active Mini Boss starts with 10 hearts.
+[PASS] Continue Adventure marks the challenge and Theme Pending.
+[PASS] Continue Adventure grants 0 XP, 0 Gold and 0 Gems.
+
+PEDAGOGICAL VALIDATION
+[PASS] Shadow Match draws only from a restricted eligible pool.
+[PASS] Colors-style forced Shadow behavior was not copied.
+[PASS] Every vocabulary image contains one intended concept and no label.
+[PASS] The Mini Boss uses a shuffled 30-word deck.
+[PASS] Memory matched cards become visibly completed and inactive.
+[PASS] Spell Forge and Word Puzzle include DELETE and CLEAR.
+
+LIMITS OF THIS QA
+- The package was not deployed to the user’s live GitHub repository.
+- The complete existing World 1 asset tree was not re-uploaded in this chat,
+  so the original 240 World 1 game/theme combinations were not regression-tested.
+- The world1.html patch itself passed syntax and integration checks; final live
+  deployment must still be verified after merging with the existing repository.

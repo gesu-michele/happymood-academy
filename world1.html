@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#102c1b">
 <title>Lexiconia · World 1: The Beginning Forest</title>
-<meta name="lexiconia-build" content="lexiconia-world1-block3-stable-v1">
+<meta name="lexiconia-build" content="lexiconia-world1-block3-water-world-link-v1">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
 :root{
@@ -304,7 +304,7 @@ body::before{content:"";position:fixed;inset:0;background:
 
 <section id="partCompleteScreen" class="screen forest-bg">
   <div class="particles"></div>
-  <div class="complete-wrap"><div class="complete-card"><div style="font-size:105px">🏆</div><h1>THE BEGINNING FOREST IS RESTORED!</h1><p style="font-size:22px">You recovered 600 words across twenty themes.</p><p>The final forest challenge will open in the next chapter.</p><button id="returnMapFinal" class="fantasy-btn gold">RETURN TO WORLD MAP</button></div></div>
+  <div class="complete-wrap"><div class="complete-card"><div style="font-size:105px">🏆🌊</div><h1>THE BEGINNING FOREST IS RESTORED!</h1><p style="font-size:22px">You recovered 600 words across twenty themes.</p><p>The portal to <strong>Water World</strong> is now open.</p><div class="boss-actions"><button id="goWorld2" class="fantasy-btn purple">🌊 GO TO WORLD 2 ➜</button><button id="returnMapFinal" class="fantasy-btn gold">RETURN TO WORLD MAP</button></div></div></div>
 </section>
 
 <div id="feedback" class="feedback"><div class="feedback-card"><div id="feedbackIcon" style="font-size:72px">✨</div><h2 id="feedbackTitle">Great!</h2><p id="feedbackText"></p></div></div>
@@ -740,6 +740,7 @@ $("backMap").onclick=renderMap;$("startCurrentGame").onclick=beginSelectedGame;$
 $("emergencyNext").onclick=useEmergencyNext;$("continueThemeLater").onclick=useEmergencyNext;$("continueBossLater").onclick=useEmergencyNext;
 $("startBoss").onclick=()=>startGame("boss");
 $("continueTheme").onclick=()=>{if(save.themeComplete.filter(Boolean).length===THEMES.length){show("partCompleteScreen")}else{currentTheme=save.themeIndex;renderMap()}};
+$("goWorld2").onclick=()=>{const ready=save.themeComplete.length>=20&&save.themeComplete.slice(0,20).every(Boolean);if(ready){location.href="world2.html"}else showToast("Complete all 20 Themes first.")};
 $("returnMapFinal").onclick=renderMap;
 $("musicBtn").onclick=toggleMusic;$("fullBtn").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});
 particles();updateHud();renderMap();persist();
