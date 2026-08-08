@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#063f67">
-<meta name="lexiconia-build" content="lexiconia-world2-water-world-theme01-v1">
+<meta name="lexiconia-build" content="lexiconia-world2-water-world-theme02-v1">
 <title>Lexiconia · World 2: Water World</title>
 <style>
 :root{
@@ -50,7 +50,7 @@ body::after{content:"";position:fixed;inset:0;background:radial-gradient(circle 
 <script>
 const THEMES=[
  {name:"Plants & Flowers",icon:"🌸",file:"themes/world2/01-plants-flowers.html",available:true},
- {name:"Places in Town",icon:"🏙️"},{name:"Sports",icon:"⚽"},{name:"Hobbies",icon:"🎮"},{name:"Musical Instruments",icon:"🎵"},
+ {name:"Places in Town",icon:"🏙️",file:"themes/world2/02-places-town.html",available:true},{name:"Sports",icon:"⚽"},{name:"Hobbies",icon:"🎮"},{name:"Musical Instruments",icon:"🎵"},
  {name:"Toys",icon:"🎁"},{name:"Days & Months",icon:"📅"},{name:"Time",icon:"⏰"},{name:"Prepositions of Place",icon:"📍"},{name:"Everyday Actions",icon:"🚶"},
  {name:"Action Verbs",icon:"🤸"},{name:"Shapes",icon:"🔺"},{name:"Opposites",icon:"🌊"},{name:"Adjectives",icon:"✨"},{name:"Shopping",icon:"🛒"},
  {name:"Celebrations",icon:"🎂"},{name:"Technology",icon:"💻"},{name:"Wild Animals",icon:"🐾"},{name:"Countries & Flags",icon:"🌎"},{name:"Review World",icon:"🚀"}
@@ -67,7 +67,10 @@ function persist(){save.lastPlayed=Date.now();try{const all=JSON.parse(localStor
 function economy(){const s=world1Save();return{xp:Number(s.xp)||0,gems:Number(s.gems)||0,gold:Number(s.gold)||0}}
 function rank(xp){if(xp>=20000)return"Tidal Guardian";if(xp>=12000)return"Ocean Pathfinder";if(xp>=7000)return"Coral Ranger";return"Water Explorer"}
 function updateHud(){const e=economy();$("heroName").textContent=profile?.name||"Hero";$("heroRank").textContent=rank(e.xp);$("xp").textContent=e.xp.toLocaleString();$("gems").textContent=e.gems.toLocaleString();$("gold").textContent=e.gold.toLocaleString()}
-function render(){const path=$("path");path.innerHTML="";THEMES.forEach((t,i)=>{const done=save.themeComplete[i],pending=save.themePending[i],unlocked=i<=save.themeIndex&&t.available;const b=document.createElement("button");b.className=`node ${done?"complete":pending?"pending":""} ${i===save.themeIndex&&!done&&t.available?"current":""} ${!unlocked&&!done&&!pending?"locked":""}`;b.disabled=!unlocked&&!done&&!pending;b.innerHTML=`<span class="num">${i+1}</span><span class="icon">${t.icon}</span><span class="node-name">${t.name}</span><span class="status">${done?"Restored":pending?"Pending":unlocked?"Enter":t.available?"Locked":"Coming Soon"}</span>`;b.onclick=()=>{if(t.file&&(unlocked||done||pending))location.href=t.file;else toast("This Theme is being prepared.")};path.appendChild(b)});const n=save.themeComplete.filter(Boolean).length;$("count").textContent=`${n} / 20 Themes`;$("fill").style.width=(n/20*100)+"%";const next=THEMES.findIndex((t,i)=>t.available&&!save.themeComplete[i]);$("continue").textContent=next>=0?`CONTINUE: ${THEMES[next].name.toUpperCase()} ➜`:"NEXT THEME COMING SOON";$("continue").disabled=next<0;$("continue").onclick=()=>{if(next>=0)location.href=THEMES[next].file};updateHud();persist()}
+function render(){const path=$("path");path.innerHTML="";THEMES.forEach((t,i)=>{const done=save.themeComplete[i],pending=save.themePending[i],unlocked=i<=save.themeIndex&&t.available;const b=document.createElement("button");b.className=`node ${done?"complete":pending?"pending":""} ${i===save.themeIndex&&!done&&t.available?"current":""} ${!unlocked&&!done&&!pending?"locked":""}`;b.disabled=!unlocked&&!done&&!pending;b.innerHTML=`<span class="num">${i+1}</span><span class="icon">${t.icon}</span><span class="node-name">${t.name}</span><span class="status">${done?"Restored":pending?"Pending":unlocked?"Enter":t.available?"Locked":"Coming Soon"}</span>`;b.onclick=()=>{if(t.file&&(unlocked||done||pending))location.href=t.file;else toast("This Theme is being prepared.")};path.appendChild(b)});const n=save.themeComplete.filter(Boolean).length;$("count").textContent=`${n} / 20 Themes`;$("fill").style.width=(n/20*100)+"%";const playable=THEMES.map((t,i)=>({t,i})).filter(({t,i})=>t.available&&i<=save.themeIndex&&!save.themeComplete[i]);
+const preferred=playable.find(({i})=>i===save.themeIndex)||playable[playable.length-1]||null;
+const next=preferred?preferred.i:-1;
+$("continue").textContent=next>=0?`CONTINUE: ${THEMES[next].name.toUpperCase()} ➜`:"NEXT THEME COMING SOON";$("continue").disabled=next<0;$("continue").onclick=()=>{if(next>=0)location.href=THEMES[next].file};updateHud();persist()}
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1500)}
 function bubbles(){const box=$("bubbles");for(let i=0;i<38;i++){const b=document.createElement("i");b.style.setProperty("--s",(5+Math.random()*18)+"px");b.style.setProperty("--x",Math.random()*100+"%");b.style.setProperty("--d",(9+Math.random()*15)+"s");b.style.setProperty("--drift",(-55+Math.random()*110)+"px");b.style.animationDelay=(-Math.random()*18)+"s";box.appendChild(b)}}
 let musicOn=true;const track=$("musicTrack");track.volume=.18;$("music").onclick=()=>{musicOn=!musicOn;$("music").textContent=musicOn?"♫":"🔇";if(musicOn)track.play().catch(()=>{});else{track.pause();track.currentTime=0}};document.addEventListener("pointerdown",()=>{if(musicOn&&track.paused)track.play().catch(()=>{})},{once:true});$("full").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});$("backWorld1").onclick=$("gateBack").onclick=()=>location.href="world1.html";
