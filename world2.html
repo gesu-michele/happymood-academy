@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#063f67">
-<meta name="lexiconia-build" content="lexiconia-world2-water-world-theme03-v1">
+<meta name="lexiconia-build" content="lexiconia-world2-water-world-theme04-meta-v1">
 <title>Lexiconia · World 2: Water World</title>
 <style>
 :root{
@@ -50,7 +50,7 @@ body::after{content:"";position:fixed;inset:0;background:radial-gradient(circle 
 <script>
 const THEMES=[
  {name:"Plants & Flowers",icon:"🌸",file:"themes/world2/01-plants-flowers.html",available:true},
- {name:"Places in Town",icon:"🏙️",file:"themes/world2/02-places-town.html",available:true},{name:"Sports",icon:"⚽",file:"themes/world2/03-sports.html",available:true},{name:"Hobbies",icon:"🎮"},{name:"Musical Instruments",icon:"🎵"},
+ {name:"Places in Town",icon:"🏙️",file:"themes/world2/02-places-town.html",available:true},{name:"Sports",icon:"⚽",file:"themes/world2/03-sports.html",available:true},{name:"Hobbies",icon:"🎮",file:"themes/world2/04-hobbies.html",available:true},{name:"Musical Instruments",icon:"🎵"},
  {name:"Toys",icon:"🎁"},{name:"Days & Months",icon:"📅"},{name:"Time",icon:"⏰"},{name:"Prepositions of Place",icon:"📍"},{name:"Everyday Actions",icon:"🚶"},
  {name:"Action Verbs",icon:"🤸"},{name:"Shapes",icon:"🔺"},{name:"Opposites",icon:"🌊"},{name:"Adjectives",icon:"✨"},{name:"Shopping",icon:"🛒"},
  {name:"Celebrations",icon:"🎂"},{name:"Technology",icon:"💻"},{name:"Wild Animals",icon:"🐾"},{name:"Countries & Flags",icon:"🌎"},{name:"Review World",icon:"🚀"}
@@ -76,5 +76,6 @@ function bubbles(){const box=$("bubbles");for(let i=0;i<38;i++){const b=document
 let musicOn=true;const track=$("musicTrack");track.volume=.18;$("music").onclick=()=>{musicOn=!musicOn;$("music").textContent=musicOn?"♫":"🔇";if(musicOn)track.play().catch(()=>{});else{track.pause();track.currentTime=0}};document.addEventListener("pointerdown",()=>{if(musicOn&&track.paused)track.play().catch(()=>{})},{once:true});$("full").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});$("backWorld1").onclick=$("gateBack").onclick=()=>location.href="world1.html";
 bubbles();if(!world1Complete()){$("app").style.display="none";$("gate").classList.add("show")}else render();
 </script>
+<script src="assets/world2/lexiconia-meta.js"></script>
 </body>
 </html>
