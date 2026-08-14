@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#064f72">
+<meta name="lexiconia-build" content="lexiconia-world2-theme05-musical-instruments-v1.0">
+<title>Lexiconia · Musical Instruments</title>
+<style>
+:root{
+ --gold:#ffd45b;--gold2:#b96f08;--aqua:#41dced;--blue:#087ebd;--deep:#052c50;--navy:#041b35;
+ --green:#45b95b;--green2:#17663a;--cream:#fff8dc;--ink:#17314a;--panel:rgba(4,29,53,.92);
+ --line:rgba(255,215,92,.68);--shadow:0 18px 55px rgba(0,0,0,.48)
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Trebuchet MS,Segoe UI,Arial,sans-serif;color:#fff;background:#03182e;overflow-x:hidden}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}
+body::before{content:"";position:fixed;inset:-18px;background:linear-gradient(rgba(0,59,103,.28),rgba(0,14,37,.76)),url("../../assets/world2/water-world-map.png") center/cover no-repeat;filter:blur(4px) brightness(.65) saturate(1.08);transform:scale(1.04);z-index:-3}body::after{content:"";position:fixed;inset:0;background:radial-gradient(circle at 48% 22%,rgba(78,239,244,.18),transparent 31%),linear-gradient(180deg,rgba(1,47,78,.02),rgba(0,7,23,.62));z-index:-2;pointer-events:none}
+#app{min-height:100vh;position:relative}.screen{display:none;min-height:100vh;position:relative}.screen.active{display:flex}.bubbles{position:absolute;inset:0;overflow:hidden;pointer-events:none}.bubbles i{position:absolute;bottom:-70px;width:var(--s);height:var(--s);border:2px solid rgba(223,253,255,.62);border-radius:50%;animation:rise var(--d) linear infinite;left:var(--x);opacity:.5}@keyframes rise{to{transform:translateY(-120vh) translateX(var(--drift));opacity:.02}}
+.topbar{position:fixed;top:10px;left:10px;right:10px;z-index:70;display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:none}.profile,.hud,.top-actions{pointer-events:auto}.profile{display:flex;align-items:center;gap:10px;background:linear-gradient(160deg,rgba(4,45,78,.97),rgba(3,22,47,.97));border:2px solid var(--line);padding:7px 14px 7px 7px;border-radius:19px;box-shadow:var(--shadow)}.profile img{width:49px;height:49px;border-radius:50%;object-fit:cover;border:3px solid var(--gold)}.profile-name{font-size:17px;font-weight:900}.profile-rank{font-size:11px;color:#c8f3ff;margin-top:4px}.hud{display:flex;align-items:center;gap:8px}.currency{min-width:79px;background:rgba(3,24,49,.96);border:2px solid var(--line);border-radius:18px;padding:9px 12px;font-weight:900;text-align:center;box-shadow:0 10px 24px rgba(0,0,0,.35)}.top-actions{display:flex;gap:7px}.round-btn{width:45px;height:45px;border-radius:50%;border:2px solid var(--line);color:#fff;background:linear-gradient(#167cad,#073e68);font-size:20px;box-shadow:0 9px 21px rgba(0,0,0,.34)}
+.theme-wrap{width:min(1450px,96vw);margin:auto;padding:98px 18px 28px}.theme-header{text-align:center;background:linear-gradient(180deg,rgba(17,142,179,.97),rgba(5,63,111,.98));border:4px solid #dcae40;border-radius:27px;padding:14px;box-shadow:var(--shadow),inset 0 0 25px rgba(255,255,255,.13)}.theme-header h1{font:900 clamp(34px,4.8vw,68px) Georgia,serif;color:#fff2a2;text-shadow:0 4px 0 #815006,0 8px 16px #00162e;margin:0}.theme-header p{font-size:18px;margin:7px 0;color:#e2f9ff}.game-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:22px}.game-node{position:relative;min-height:180px;border:3px solid #d2a940;border-radius:23px;background:linear-gradient(165deg,#f6fff0,#a9e6df);color:#15364b;padding:18px 10px 13px;text-align:center;box-shadow:0 13px 29px rgba(0,0,0,.35);transition:.17s}.game-node:hover:not(:disabled){transform:translateY(-3px);filter:brightness(1.05)}.game-node.current{outline:7px solid rgba(62,226,243,.3);box-shadow:0 0 34px #41dced,0 13px 29px rgba(0,0,0,.37)}.game-node.locked{filter:grayscale(.75) brightness(.55)}.game-node.complete{background:linear-gradient(165deg,#f7ffd8,#a4ddb2)}.game-node.pending{border-color:#ffbb47;background:linear-gradient(165deg,#fff5c9,#b4dfea)}.game-node.complete::after{content:"✓";position:absolute;right:8px;top:8px;width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#2fa44f;color:#fff;font-weight:900}.game-num{position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:39px;height:39px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(#25a5d1,#07558b);border:3px solid var(--gold);color:#fff;font-weight:900}.game-icon{font-size:54px;margin-top:11px}.game-name{font:900 19px Georgia,serif;margin-top:6px}.game-stars{font-size:17px;color:#8e6b28;letter-spacing:2px;margin-top:8px}.theme-bottom{display:flex;align-items:center;gap:15px;margin-top:18px}.back-btn{width:56px;height:56px;border-radius:50%;border:3px solid #e7c15b;background:#082d4d;color:white;font-size:27px}.progress-card{flex:1;background:rgba(3,26,51,.94);border:2px solid var(--line);border-radius:20px;padding:14px 19px}.progress-line{height:18px;border-radius:999px;background:#03101f;border:2px solid #6e5930;overflow:hidden;margin-top:8px}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#3fd6e9,#65d36b,#ffe04d);transition:.4s}.fantasy-btn{border:3px solid var(--gold);border-radius:20px;color:#fff;background:linear-gradient(#3dbfca,#0874a8);padding:15px 24px;font-size:clamp(17px,2vw,27px);font-weight:900;box-shadow:0 10px 0 #055079,0 16px 28px rgba(0,0,0,.4);text-shadow:0 2px 2px #00334e;transition:.16s}.fantasy-btn:hover{transform:translateY(-2px);filter:brightness(1.08)}.fantasy-btn.gold{background:linear-gradient(#ffb929,#c97508);box-shadow:0 10px 0 #754004,0 16px 28px rgba(0,0,0,.4)}.fantasy-btn.purple{background:linear-gradient(#9856c8,#52277a);box-shadow:0 10px 0 #2a123e,0 16px 28px rgba(0,0,0,.4)}.emergency-btn{display:inline-flex;align-items:center;justify-content:center;min-width:198px;padding:11px 15px;border-radius:15px;border:3px solid #ffda67;background:linear-gradient(135deg,#9c307b,#5c2875);color:#fff;font-size:14px;font-weight:900;box-shadow:0 8px 18px rgba(0,0,0,.25)}.emergency-btn.attention{animation:pulse 1.05s ease-in-out infinite}@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(255,218,103,.2),0 8px 18px rgba(0,0,0,.25)}}
+.game-wrap{width:min(1510px,98vw);margin:auto;padding:87px 13px 17px;display:grid;grid-template-columns:205px 1fr 225px;gap:14px;min-height:100vh}.side-panel,.help-panel,.game-panel{background:rgba(3,27,50,.93);border:2px solid var(--line);border-radius:24px;box-shadow:var(--shadow);backdrop-filter:blur(7px)}.side-panel{padding:14px;display:flex;flex-direction:column;gap:11px}.lyra-card{text-align:center}.lyra-card img{width:108px;height:108px;border-radius:50%;object-fit:cover;border:4px solid var(--gold)}.lyra-card h2{font:900 28px Georgia,serif;color:#fff0a0;margin:5px}.lyra-tip{background:#fff7df;color:#23372d;border-radius:15px;padding:11px;font-weight:800;min-height:75px;display:grid;place-items:center;text-align:center}.mini-progress{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:auto}.mini-dot{height:11px;border-radius:999px;background:#1a3546;border:1px solid #806d3f}.mini-dot.on{background:#48d6e7;box-shadow:0 0 9px #55e7f3}.mini-dot.done{background:#54bc59}.game-panel{padding:17px;display:flex;flex-direction:column;min-width:0}.game-banner{text-align:center;background:linear-gradient(#188eb4,#064d82);border:3px solid #d8aa40;border-radius:19px;padding:8px;margin-bottom:11px}.game-banner h1{font:900 clamp(27px,4vw,49px) Georgia,serif;color:#fff0a2;margin:0}.game-banner small{font-size:14px;color:#d9f6ff}.prompt{background:#fff8e3;color:#1b3042;border:4px solid #cfab61;border-radius:22px;min-height:93px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(21px,3vw,38px);font-weight:900;padding:11px;position:relative;overflow:hidden}.speak-btn{position:absolute;left:13px;width:50px;height:50px;border-radius:50%;border:3px solid #dfb94a;background:#3c65a4;color:#fff;font-size:23px}.answers{flex:1;display:grid;gap:12px;margin-top:13px;align-content:center}.answers.images{grid-template-columns:repeat(3,minmax(145px,1fr))}.answers.words{grid-template-columns:repeat(2,minmax(170px,1fr))}.image-choice{height:205px;border:4px solid #d7c99e;border-radius:22px;background:linear-gradient(#fff,#ecf6f2);padding:7px;overflow:hidden;box-shadow:0 9px 22px rgba(0,0,0,.23);transition:.15s}.word-choice{min-height:84px;border:3px solid #d5c293;border-radius:19px;background:linear-gradient(#fff7de,#ead8b3);color:#1a2b3d;padding:11px;font-size:clamp(19px,2.4vw,31px);font-weight:900;transition:.15s}.image-choice.correct,.word-choice.correct,.tf-btn.correct{border-color:#42c568!important;background:#e2ffdf!important;box-shadow:0 0 24px rgba(55,220,97,.58)}.image-choice.wrong,.word-choice.wrong,.tf-btn.wrong{border-color:#ed5363!important;background:#ffe4e7!important;animation:shake .27s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}.asset-shell{position:relative;display:grid;place-items:center;width:100%;height:100%;overflow:hidden;border-radius:15px}.asset-shell img{width:100%;height:100%;object-fit:contain;display:block}.prompt .asset-shell{width:150px;height:78px;flex:0 0 150px}.help-panel{padding:14px;display:flex;flex-direction:column;gap:9px}.help-panel h3{font:900 19px Georgia,serif;background:#117da5;border-radius:14px;padding:9px;text-align:center;margin:0}.help-panel p{line-height:1.42;font-weight:700;color:#e5f8ff}.session-stats{margin-top:auto;display:grid;gap:8px}.stat{display:flex;justify-content:space-between;background:rgba(255,255,255,.08);padding:9px;border-radius:12px}.game-footer{display:flex;align-items:center;gap:11px;margin-top:11px}.round-track{flex:1;height:18px;border-radius:999px;background:#03101c;border:2px solid #69582e;overflow:hidden}.round-fill{height:100%;width:0;background:linear-gradient(90deg,#40d7e8,#68d36b,#ffdc43);transition:.3s}.feedback{position:fixed;inset:0;display:none;place-items:center;z-index:120;background:rgba(0,0,0,.52)}.feedback.show{display:grid}.feedback-card{background:linear-gradient(#fff8dd,#e9dbb5);color:#172a2a;border:5px solid #efc14e;border-radius:28px;padding:29px;min-width:min(470px,90vw);text-align:center;box-shadow:0 25px 80px #000}.feedback-card h2{font:900 37px Georgia,serif;color:#116f9b;margin:0 0 9px}.memory-grid{display:grid;grid-template-columns:repeat(6,minmax(88px,1fr));gap:9px;width:100%;max-width:1050px;margin:auto}.memory-card{height:112px;border-radius:16px;border:3px solid #d2a942;background:linear-gradient(135deg,#126f9a,#073a67);color:#fff;position:relative;transform-style:preserve-3d;transition:transform .32s,opacity .35s}.memory-card.flipped,.memory-card.matched{transform:rotateY(180deg)}.memory-card.matched{opacity:.16;pointer-events:none}.memory-face{position:absolute;inset:0;backface-visibility:hidden;display:grid;place-items:center;border-radius:13px}.memory-front{font-size:40px}.memory-back{transform:rotateY(180deg);background:#fff8e1;color:#183047;padding:6px;font-size:16px;font-weight:900;overflow:hidden}.memory-back .asset-shell{height:100%}.balloon-area{min-height:450px;position:relative;overflow:hidden;border-radius:20px;background:linear-gradient(#87dcff,#dff7ff 57%,#6ed2c0 58%,#1e8b72)}.balloon{position:absolute;width:118px;height:151px;border-radius:55% 55% 50% 50%;display:grid;place-items:center;padding:10px;border:3px solid rgba(255,255,255,.78);box-shadow:inset -14px -18px 24px rgba(0,0,0,.18),0 12px 22px rgba(0,0,0,.25);animation:bob 2.2s ease-in-out infinite}.balloon::after{content:"";position:absolute;bottom:-43px;width:2px;height:43px;background:#685e55}@keyframes bob{50%{transform:translateY(-12px)}}.balloon-picture{width:87px;height:87px;border-radius:50%;display:grid;place-items:center;padding:7px;background:rgba(255,255,255,.96);overflow:hidden}.letters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.letter-btn{min-width:52px;height:56px;border-radius:13px;border:3px solid #d3aa43;background:linear-gradient(#fff4c5,#dcb873);font-size:27px;font-weight:900;color:#2b2131}.built-word{min-height:70px;display:flex;flex-wrap:wrap;gap:7px;justify-content:center;align-items:center;margin:9px}.built-slot{width:49px;height:57px;border-bottom:5px solid #d5a33b;display:grid;place-items:center;font-size:29px;font-weight:900}.spell-controls{display:flex;justify-content:center;gap:11px;flex-wrap:wrap;margin:15px 0 3px}.spell-control{min-width:140px;height:49px;border-radius:14px;border:3px solid #d4aa42;background:linear-gradient(#fff6cf,#dbb56c);color:#2b2032;font-weight:900}.tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px;max-width:700px;margin:auto;width:100%}.tf-btn{height:108px;border-radius:22px;border:4px solid #e6c152;font-size:33px;font-weight:900;color:#fff}.tf-btn.true{background:#3a9a4b}.tf-btn.false{background:#d84756}.boss-screen{background:linear-gradient(rgba(0,25,50,.28),rgba(0,11,32,.76))}.boss-intro{width:min(1050px,94vw);margin:auto;text-align:center;padding:88px 20px 27px}.boss-card{background:rgba(3,25,48,.94);border:4px solid #d6af43;border-radius:30px;padding:27px;box-shadow:var(--shadow)}.boss-card h1{font:900 clamp(44px,7vw,86px) Georgia,serif;color:#ffe077;text-shadow:0 5px #663407;margin:0}.guardian{font-size:110px;filter:drop-shadow(0 0 24px #67ffd1)}.boss-actions{display:flex;justify-content:center;gap:13px;flex-wrap:wrap;margin-top:17px}.complete-wrap{width:min(930px,92vw);margin:auto;text-align:center;padding:104px 20px 28px}.complete-card{background:rgba(3,25,48,.95);border:4px solid #dfb546;border-radius:30px;padding:30px;box-shadow:var(--shadow)}.complete-card h1{font:900 clamp(37px,6vw,66px) Georgia,serif;color:#ffe078}.loader{position:fixed;inset:0;z-index:150;background:#031a31;display:none;place-items:center;text-align:center}.loader.show{display:grid}.loader-box{width:min(510px,88vw)}.loader-bar{height:21px;border-radius:999px;border:2px solid #cda844;background:#111;overflow:hidden;margin-top:14px}.loader-fill{height:100%;width:0;background:linear-gradient(90deg,#3fd9e8,#5fd36a,#ffe14e);transition:.16s}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:170;background:#071e35;border:2px solid #ddb747;border-radius:14px;padding:12px 18px;font-weight:900;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}.gate{display:none;min-height:100vh;place-items:center;padding:30px}.gate.show{display:grid}.gate-card{width:min(690px,92vw);text-align:center;padding:33px;border:4px solid var(--gold);border-radius:30px;background:rgba(3,26,50,.95);box-shadow:var(--shadow)}
+@media(max-width:1120px){.game-grid{grid-template-columns:repeat(3,1fr)}.game-wrap{grid-template-columns:170px 1fr}.help-panel{display:none}.answers.images{grid-template-columns:repeat(2,1fr)}.memory-grid{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:760px){.topbar{top:5px;left:5px;right:5px}.profile-rank{display:none}.profile img{width:38px;height:38px}.currency{min-width:auto;padding:7px}.theme-wrap{padding-top:84px}.game-grid{grid-template-columns:repeat(2,1fr)}.theme-bottom{flex-wrap:wrap}.progress-card{order:4;width:100%}.game-wrap{display:block;padding-top:80px}.side-panel{display:none}.game-panel{min-height:calc(100vh - 93px)}.answers.images{grid-template-columns:1fr 1fr}.image-choice{height:168px}.memory-grid{grid-template-columns:repeat(4,1fr)}.memory-card{height:100px}.emergency-btn{min-width:150px;font-size:12px}}
+.prompt .asset-shell.hobby-large{width:220px;height:220px;flex:0 0 220px}.prompt:has(.hobby-large){min-height:245px}.hobby-large img{object-fit:contain!important}@media(max-width:760px){.prompt .asset-shell.hobby-large{width:155px;height:155px;flex:0 0 155px}.prompt:has(.hobby-large){min-height:180px}}
+
+/* Theme 05 precedent: complete, uncropped PNG visuals and musical-game controls */
+.asset-shell{position:relative;background:linear-gradient(145deg,#ffffff,#eef9ff);isolation:isolate}
+.asset-shell img{position:relative;z-index:2;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;padding:4%;display:block}
+.asset-shell .asset-fallback{position:absolute;inset:0;z-index:1;display:grid;place-items:center;background:radial-gradient(circle at 35% 24%,#fff 0,#e8f7ff 62%,#c9e8f7 100%);font-size:clamp(48px,8vw,94px);color:#0b6a91}
+.asset-shell.loaded .asset-fallback{display:none}.asset-shell.missing img{display:none}
+.instrument-large{width:min(620px,92%)!important;height:min(390px,44vh)!important;min-height:260px!important;margin:auto;border:3px solid #c9ad60;border-radius:20px;box-shadow:0 12px 25px rgba(0,0,0,.18)}
+.sound-panel{display:grid;place-items:center;gap:12px;padding:10px;text-align:center}.sound-orb{width:118px;height:118px;border-radius:50%;border:5px solid #ffd45b;background:radial-gradient(circle at 35% 28%,#69eafa,#1088bd 48%,#073b70);color:#fff;font-size:52px;box-shadow:0 0 35px rgba(65,220,237,.65),0 14px 27px rgba(0,0,0,.27)}
+.sound-panel strong{font-size:clamp(24px,3vw,38px);color:#0b5c87}.sound-panel small{font-size:15px;color:#536875}.clue-btn{border:3px solid #e0b84a;border-radius:16px;padding:11px 17px;background:linear-gradient(#8b59c3,#4f2779);color:#fff;font-weight:900;box-shadow:0 7px 0 #2c143f}
+.preview-badge{position:fixed;left:50%;top:72px;transform:translateX(-50%);z-index:140;background:#5b245f;color:#fff7b0;border:2px solid #ffd45b;border-radius:999px;padding:8px 14px;font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.35);font-size:13px;white-space:nowrap}
+.preteach-lock-note{text-align:center;margin:14px auto 0;width:min(780px,94%);padding:12px 16px;border:2px solid #ffd45b;border-radius:16px;background:rgba(4,32,64,.92);font-weight:900;color:#fff2a0}
+@media(max-width:760px){.instrument-large{height:290px!important;min-height:220px!important}.preview-badge{top:68px;font-size:10px;max-width:94vw;white-space:normal;text-align:center}}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate"><div class="gate-card"><div id="gateIcon" style="font-size:82px">🔒🌊</div><h1 id="gateTitle" style="font:900 55px Georgia,serif;color:#8ceeff;margin:0">Theme Locked</h1><p id="gateText" style="font-size:20px;line-height:1.45">Complete Hobbies before entering this Theme.</p><button id="gateBack" class="fantasy-btn gold">RETURN TO WATER WORLD</button></div></div>
+<div id="app">
+<div class="topbar"><div class="profile"><img src="../../assets/world2/lyra.jpg" alt="Lyra"><div><div id="heroName" class="profile-name">Hero</div><div id="heroRank" class="profile-rank">Water Explorer</div></div></div><div class="hud"><div class="currency">⭐ <b id="xp">0</b></div><div class="currency">💎 <b id="gems">0</b></div><div class="currency">🪙 <b id="gold">0</b></div><div class="top-actions"><button id="musicBtn" class="round-btn" aria-label="Music">♫</button><button id="fullBtn" class="round-btn" aria-label="Fullscreen">⛶</button></div></div></div>
+
+<section id="themeScreen" class="screen active"><div class="bubbles"></div><div class="theme-wrap"><div class="theme-header"><h1>MUSICAL INSTRUMENTS</h1><p>Theme 05 · Learn 30 instruments before beginning the adventure.</p></div><div id="preTeachLockNote" class="preteach-lock-note">📚 Pre-Teach Vocabulary is mandatory. Study all 30 instruments before entering the games.</div><div id="gameGrid" class="game-grid"></div><div class="theme-bottom"><button id="backWorld2" class="back-btn" aria-label="Back to Water World">←</button><button id="continueThemeLater" class="emergency-btn">CONTINUE ADVENTURE ➜</button><div class="progress-card"><strong id="themeProgressText">0 / 13 experiences complete</strong><div class="progress-line"><div id="themeProgress" class="progress-fill"></div></div></div><button id="startCurrentGame" class="fantasy-btn">LEARN VOCABULARY FIRST ➜</button></div></div></section>
+
+<section id="gameScreen" class="screen"><div class="bubbles"></div><div class="game-wrap"><aside class="side-panel"><div class="lyra-card"><img src="../../assets/world2/lyra.jpg" alt="Lyra"><h2>Lyra</h2></div><div id="lyraTip" class="lyra-tip">Listen, look carefully, and let the music guide you!</div><div id="miniProgress" class="mini-progress"></div></aside><main class="game-panel"><div class="game-banner"><h1 id="gameTitle">Picture Quest</h1><small>World 2 · Theme 05 · Musical Instruments</small></div><div id="prompt" class="prompt"></div><div id="answers" class="answers images"></div><div class="game-footer"><button id="exitGame" class="back-btn">←</button><button id="emergencyNext" class="emergency-btn">CONTINUE ADVENTURE ➜</button><div class="round-track"><div id="roundFill" class="round-fill"></div></div><strong id="roundCounter">1 / 10</strong></div></main><aside class="help-panel"><h3>HOW TO PLAY</h3><p id="helpText">Choose the correct answer.</p><div class="session-stats"><div class="stat"><span>Correct</span><b id="correctStat">0</b></div><div class="stat"><span>Streak</span><b id="streakStat">0</b></div><div class="stat"><span>Score</span><b id="scoreStat">0</b></div><div id="timerStat" class="stat" style="display:none"><span>Time</span><b id="timerValue">45</b></div><div id="heartStat" class="stat" style="display:none"><span>Hearts</span><b id="heartValue">10</b></div></div></aside></div></section>
+
+<section id="bossScreen" class="screen boss-screen"><div class="bubbles"></div><div class="boss-intro"><div class="boss-card"><div class="guardian">🎼🫧</div><h1>MINI BOSS</h1><h2 style="font-size:30px">Guardian of the Harmonic Reef</h2><p style="font-size:19px">Use everything you learned. Recover all 30 instruments and restore the Music Crystal.</p><p style="font-size:27px">❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️</p><div class="boss-actions"><button id="startBoss" class="fantasy-btn gold">START MINI BOSS ➜</button><button id="continueBossLater" class="emergency-btn">CONTINUE ADVENTURE ➜</button></div><small style="display:block;margin-top:12px;color:#e7f7ff;font-weight:800">You can come back later.</small></div></div></section>
+
+<section id="completeScreen" class="screen"><div class="bubbles"></div><div class="complete-wrap"><div class="complete-card"><div style="font-size:100px">🔑🎵</div><h1>Musical Instruments Restored!</h1><p style="font-size:22px">All 30 instrument words have returned to Lexiconia.</p><div id="rewardText" style="font-size:25px;color:#ffe077;font-weight:900;margin:17px"></div><button id="returnWaterWorld" class="fantasy-btn gold">RETURN TO WATER WORLD ➜</button></div></div></section>
+
+<div id="feedback" class="feedback"><div class="feedback-card"><div id="feedbackIcon" style="font-size:70px">✨</div><h2 id="feedbackTitle">Great!</h2><p id="feedbackText"></p></div></div>
+<div id="loader" class="loader"><div class="loader-box"><div style="font-size:65px">🎵🫧</div><h2>Preparing Musical Instruments...</h2><div class="loader-bar"><div id="loaderFill" class="loader-fill"></div></div><p id="loaderText">0%</p></div></div>
+<div id="toast" class="toast"></div>
+<audio id="normalMusic" src="../../audio/forest.mp3" loop preload="auto"></audio><audio id="bossMusic" src="../../audio/boss.mp3" loop preload="auto"></audio><audio id="rewardMusic" src="../../audio/reward.mp3" preload="auto"></audio>
+</div>
+
+<script>
+
+const THEME_INDEX=4, NEXT_THEME_INDEX=5, THEME_ID="musical-instruments";
+const PREVIEW=new URLSearchParams(location.search).get("preview")==="teacher"||new URLSearchParams(location.search).get("teacherPreview")==="1";
+const WORLD2_URL="../../world2.html"+(PREVIEW?"?preview=teacher":"");
+const ROOT="../../assets/world2/musical-instruments/words/";
+const WORDS=[
+  {
+    "word": "guitar",
+    "spoken": "guitar",
+    "es": "guitarra",
+    "file": "01-guitar.png",
+    "img": "../../assets/world2/musical-instruments/words/01-guitar.png",
+    "concept": "strings",
+    "clue": "It usually has six strings and is played by strumming or plucking.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "violin",
+    "spoken": "violin",
+    "es": "violín",
+    "file": "02-violin.png",
+    "img": "../../assets/world2/musical-instruments/words/02-violin.png",
+    "concept": "bowed-strings",
+    "clue": "It is a small string instrument held under the chin and played with a bow.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "drums",
+    "spoken": "drums",
+    "es": "batería",
+    "file": "03-drums.png",
+    "img": "../../assets/world2/musical-instruments/words/03-drums.png",
+    "concept": "percussion",
+    "clue": "They are percussion instruments played with sticks or the hands.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "flute",
+    "spoken": "flute",
+    "es": "flauta",
+    "file": "04-flute.png",
+    "img": "../../assets/world2/musical-instruments/words/04-flute.png",
+    "concept": "woodwind",
+    "clue": "It is a long wind instrument played by blowing across an opening.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "trumpet",
+    "spoken": "trumpet",
+    "es": "trompeta",
+    "file": "05-trumpet.png",
+    "img": "../../assets/world2/musical-instruments/words/05-trumpet.png",
+    "concept": "brass",
+    "clue": "It is a bright brass instrument with three valves.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "saxophone",
+    "spoken": "saxophone",
+    "es": "saxofón",
+    "file": "06-saxophone.png",
+    "img": "../../assets/world2/musical-instruments/words/06-saxophone.png",
+    "concept": "woodwind-brass",
+    "clue": "It is a curved metal instrument played with a reed.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "harp",
+    "spoken": "harp",
+    "es": "arpa",
+    "file": "07-harp.png",
+    "img": "../../assets/world2/musical-instruments/words/07-harp.png",
+    "concept": "plucked-strings",
+    "clue": "It has many strings inside a large triangular frame.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "xylophone",
+    "spoken": "xylophone",
+    "es": "xilófono",
+    "file": "08-xylophone.png",
+    "img": "../../assets/world2/musical-instruments/words/08-xylophone.png",
+    "concept": "pitched-percussion",
+    "clue": "It has tuned bars that are struck with mallets.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "piano",
+    "spoken": "piano",
+    "es": "piano",
+    "file": "09-piano.png",
+    "img": "../../assets/world2/musical-instruments/words/09-piano.png",
+    "concept": "acoustic-keys",
+    "clue": "It is a large acoustic instrument with black and white keys.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "cello",
+    "spoken": "cello",
+    "es": "violonchelo",
+    "file": "10-cello.png",
+    "img": "../../assets/world2/musical-instruments/words/10-cello.png",
+    "concept": "bowed-strings-large",
+    "clue": "It is a large string instrument played while sitting down.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "recorder",
+    "spoken": "recorder",
+    "es": "flauta dulce",
+    "file": "11-recorder.png",
+    "img": "../../assets/world2/musical-instruments/words/11-recorder.png",
+    "concept": "woodwind-small",
+    "clue": "It is a small wind instrument with finger holes and a mouthpiece.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "keyboard",
+    "spoken": "keyboard",
+    "es": "teclado electrónico",
+    "file": "12-keyboard.png",
+    "img": "../../assets/world2/musical-instruments/words/12-keyboard.png",
+    "concept": "electronic-keys",
+    "clue": "It is an electronic instrument with black and white keys.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "accordion",
+    "spoken": "accordion",
+    "es": "acordeón",
+    "file": "13-accordion.png",
+    "img": "../../assets/world2/musical-instruments/words/13-accordion.png",
+    "concept": "bellows",
+    "clue": "It makes music when its bellows are opened and closed.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "clarinet",
+    "spoken": "clarinet",
+    "es": "clarinete",
+    "file": "14-clarinet.png",
+    "img": "../../assets/world2/musical-instruments/words/14-clarinet.png",
+    "concept": "woodwind-reed",
+    "clue": "It is a black woodwind instrument played with a single reed.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "maracas",
+    "spoken": "maracas",
+    "es": "maracas",
+    "file": "15-maracas.png",
+    "img": "../../assets/world2/musical-instruments/words/15-maracas.png",
+    "concept": "shakers",
+    "clue": "They are a pair of shakers played by moving the hands.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "trombone",
+    "spoken": "trombone",
+    "es": "trombón",
+    "file": "16-trombone.png",
+    "img": "../../assets/world2/musical-instruments/words/16-trombone.png",
+    "concept": "brass-slide",
+    "clue": "It is a brass instrument with a long movable slide.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "ukulele",
+    "spoken": "ukulele",
+    "es": "ukelele",
+    "file": "17-ukulele.png",
+    "img": "../../assets/world2/musical-instruments/words/17-ukulele.png",
+    "concept": "small-strings",
+    "clue": "It is a small four-string instrument similar to a guitar.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "triangle",
+    "spoken": "triangle",
+    "es": "triángulo",
+    "file": "18-triangle.png",
+    "img": "../../assets/world2/musical-instruments/words/18-triangle.png",
+    "concept": "metal-percussion",
+    "clue": "It is a metal triangle struck with a small beater.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "tambourine",
+    "spoken": "tambourine",
+    "es": "pandereta",
+    "file": "19-tambourine.png",
+    "img": "../../assets/world2/musical-instruments/words/19-tambourine.png",
+    "concept": "frame-percussion",
+    "clue": "It is a round frame drum with small metal jingles.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "banjo",
+    "spoken": "banjo",
+    "es": "banjo",
+    "file": "20-banjo.png",
+    "img": "../../assets/world2/musical-instruments/words/20-banjo.png",
+    "concept": "round-strings",
+    "clue": "It is a string instrument with a round drum-like body.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "electric guitar",
+    "spoken": "electric guitar",
+    "es": "guitarra eléctrica",
+    "file": "21-electric-guitar.png",
+    "img": "../../assets/world2/musical-instruments/words/21-electric-guitar.png",
+    "concept": "electric-strings",
+    "clue": "It is a solid-body string instrument commonly connected to an amplifier.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "bongos",
+    "spoken": "bongos",
+    "es": "bongós",
+    "file": "22-bongos.png",
+    "img": "../../assets/world2/musical-instruments/words/22-bongos.png",
+    "concept": "hand-drums",
+    "clue": "They are two small connected drums played with the hands.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "harmonica",
+    "spoken": "harmonica",
+    "es": "armónica",
+    "file": "23-harmonica.png",
+    "img": "../../assets/world2/musical-instruments/words/23-harmonica.png",
+    "concept": "mouth-reed",
+    "clue": "It is a small instrument held at the mouth and played by blowing and drawing air.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "tuba",
+    "spoken": "tuba",
+    "es": "tuba",
+    "file": "24-tuba.png",
+    "img": "../../assets/world2/musical-instruments/words/24-tuba.png",
+    "concept": "brass-low",
+    "clue": "It is the largest common brass instrument and has a very large bell.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "French horn",
+    "spoken": "French horn",
+    "es": "trompa francesa",
+    "file": "25-french-horn.png",
+    "img": "../../assets/world2/musical-instruments/words/25-french-horn.png",
+    "concept": "brass-coiled",
+    "clue": "It is a circular brass instrument with long coiled tubing.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "oboe",
+    "spoken": "oboe",
+    "es": "oboe",
+    "file": "26-oboe.png",
+    "img": "../../assets/world2/musical-instruments/words/26-oboe.png",
+    "concept": "double-reed",
+    "clue": "It is a slender woodwind instrument played with a double reed.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "bassoon",
+    "spoken": "bassoon",
+    "es": "fagot",
+    "file": "27-bassoon.png",
+    "img": "../../assets/world2/musical-instruments/words/27-bassoon.png",
+    "concept": "double-reed-low",
+    "clue": "It is a long wooden wind instrument with a curved metal tube.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "mandolin",
+    "spoken": "mandolin",
+    "es": "mandolina",
+    "file": "28-mandolin.png",
+    "img": "../../assets/world2/musical-instruments/words/28-mandolin.png",
+    "concept": "plucked-small",
+    "clue": "It is a small pear-shaped string instrument often played with a pick.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "bagpipes",
+    "spoken": "bagpipes",
+    "es": "gaita",
+    "file": "29-bagpipes.png",
+    "img": "../../assets/world2/musical-instruments/words/29-bagpipes.png",
+    "concept": "bag-wind",
+    "clue": "They have an air bag and several pipes.",
+    "pronunciationAudio": null,
+    "sound": null
+  },
+  {
+    "word": "castanets",
+    "spoken": "castanets",
+    "es": "castañuelas",
+    "file": "30-castanets.png",
+    "img": "../../assets/world2/musical-instruments/words/30-castanets.png",
+    "concept": "clappers",
+    "clue": "They are a pair of small wooden clappers held in the hands.",
+    "pronunciationAudio": null,
+    "sound": null
+  }
+];
+const GAMES=[
+  {
+    "name": "Picture Quest",
+    "icon": "🖼️",
+    "help": "Read the word. Choose the correct picture.",
+    "mode": "picture"
+  },
+  {
+    "name": "Listen & Find",
+    "icon": "🎧",
+    "help": "Listen. Choose the correct picture.",
+    "mode": "listen"
+  },
+  {
+    "name": "Word Portal",
+    "icon": "🌀",
+    "help": "Look at the picture. Choose the correct word.",
+    "mode": "word"
+  },
+  {
+    "name": "Memory Grove",
+    "icon": "🧠",
+    "help": "Match 15 pictures with their words.",
+    "mode": "memory"
+  },
+  {
+    "name": "Speed Hunt",
+    "icon": "⚡",
+    "help": "Answer as many questions as possible in 45 seconds.",
+    "mode": "speed"
+  },
+  {
+    "name": "Balloon Pop",
+    "icon": "🎈",
+    "help": "Read or listen. Pop the balloon with the correct picture.",
+    "mode": "balloon"
+  },
+  {
+    "name": "Spell Forge",
+    "icon": "🔤",
+    "help": "Build the instrument word with letters.",
+    "mode": "spell"
+  },
+  {
+    "name": "Missing Runes",
+    "icon": "🔮",
+    "help": "Choose the missing letter.",
+    "mode": "missing"
+  },
+  {
+    "name": "True or False",
+    "icon": "✅",
+    "help": "Decide if the word matches the instrument.",
+    "mode": "truefalse"
+  },
+  {
+    "name": "Instrument Maestro",
+    "icon": "🎼",
+    "help": "Study the complete picture or clue and identify the instrument.",
+    "mode": "maestro"
+  },
+  {
+    "name": "Sound Detective",
+    "icon": "🎧",
+    "help": "Listen to the sound or narrated clue and choose the instrument.",
+    "mode": "sound"
+  },
+  {
+    "name": "Word Puzzle",
+    "icon": "🧩",
+    "help": "Put the letters in the correct order.",
+    "mode": "puzzle"
+  },
+  {
+    "name": "Mini Boss",
+    "icon": "👑",
+    "help": "A mixed challenge using all 30 instruments.",
+    "mode": "boss"
+  }
+];
+const REGULAR_GAME_COUNT=GAMES.length-1, BOSS_INDEX=GAMES.length-1;
+const EXPECTED_FILES=["01-guitar.png", "02-violin.png", "03-drums.png", "04-flute.png", "05-trumpet.png", "06-saxophone.png", "07-harp.png", "08-xylophone.png", "09-piano.png", "10-cello.png", "11-recorder.png", "12-keyboard.png", "13-accordion.png", "14-clarinet.png", "15-maracas.png", "16-trombone.png", "17-ukulele.png", "18-triangle.png", "19-tambourine.png", "20-banjo.png", "21-electric-guitar.png", "22-bongos.png", "23-harmonica.png", "24-tuba.png", "25-french-horn.png", "26-oboe.png", "27-bassoon.png", "28-mandolin.png", "29-bagpipes.png", "30-castanets.png"];
+
+
+const PROFILE_KEY="lexiconia.sprint1.profiles.v1",ACTIVE_KEY="lexiconia.active.profile.v1",W1_KEY="lexiconia.world1.fiveThemes.v1",W2_KEY="lexiconia.world2.waterWorld.v1";
+const $=id=>document.getElementById(id),screens=[...document.querySelectorAll(".screen")];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sample=(a,n)=>shuffle(a).slice(0,n);
+const slug=s=>(s||"hero").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-");
+const escapeHtml=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function validateThemeContent(){
+ const errors=[],wordsSeen=new Set(),filesSeen=new Set();
+ if(WORDS.length!==30)errors.push(`Expected 30 words; found ${WORDS.length}.`);
+ if(GAMES.length!==13)errors.push(`Expected 13 experiences; found ${GAMES.length}.`);
+ WORDS.forEach((w,i)=>{
+  if(!w.word||!w.es||!w.file||!w.img||!w.clue)errors.push(`Incomplete word record at index ${i}.`);
+  const key=w.word.toLowerCase();if(wordsSeen.has(key))errors.push(`Duplicate word: ${w.word}`);wordsSeen.add(key);
+  if(filesSeen.has(w.file))errors.push(`Duplicate filename: ${w.file}`);filesSeen.add(w.file);
+  if(w.file!==EXPECTED_FILES[i])errors.push(`Filename mismatch at ${i+1}: ${w.file} ≠ ${EXPECTED_FILES[i]}`);
+  if(!w.file.endsWith(".png")||w.img.toLowerCase().includes(".svg"))errors.push(`Non-PNG route: ${w.img}`);
+  if(!w.img.endsWith("/"+w.file))errors.push(`Route/filename mismatch: ${w.img}`);
+ });
+ const required=["picture","listen","word","memory","speed","balloon","spell","missing","truefalse","maestro","sound","puzzle","boss"];
+ required.forEach(mode=>{if(!GAMES.some(g=>g.mode===mode))errors.push(`Missing game mode: ${mode}`)});
+ if(errors.length)throw new Error("Theme 05 content validation failed:\n"+errors.join("\n"));
+ return{ok:true,words:WORDS.length,games:GAMES.length,uniqueWords:wordsSeen.size,uniqueFiles:filesSeen.size,pngRoutes:WORDS.filter(w=>w.img.endsWith(".png")).length};
+}
+const CONTENT_VALIDATION=validateThemeContent();
+
+let profile=null;try{profile=JSON.parse(localStorage.getItem(ACTIVE_KEY)||"null")}catch(e){}
+if(!profile){try{profile=(JSON.parse(localStorage.getItem(PROFILE_KEY)||"[]").sort((a,b)=>(b.lastPlayed||0)-(a.lastPlayed||0))[0])||null}catch(e){}}
+const heroId=profile?.id||slug((profile?.name||"Hero")+"-"+(profile?.birthYear||""));
+function getWorld1All(){try{return JSON.parse(localStorage.getItem(W1_KEY)||"{}")||{}}catch(e){return{}}}
+function getWorld1Save(){return getWorld1All()[heroId]||{}}
+function world1Complete(){if(PREVIEW)return true;const s=getWorld1Save();return Array.isArray(s.themeComplete)&&s.themeComplete.length>=20&&s.themeComplete.slice(0,20).every(Boolean)}
+const defaultSave={themeIndex:0,completed:Array.from({length:20},()=>[]),pending:Array.from({length:20},()=>[]),themeComplete:Array(20).fill(false),themePending:Array(20).fill(false),mastery:{},keys:0,preTeachSeen:{},lastPlayed:Date.now()};
+let save={...defaultSave};
+try{
+ const all=JSON.parse(localStorage.getItem(W2_KEY)||"{}"),old=all[heroId]||{};
+ save={...defaultSave,...old,mastery:old.mastery||{},preTeachSeen:old.preTeachSeen||{}};
+ save.completed=Array.from({length:20},(_,i)=>Array.isArray(old.completed?.[i])?old.completed[i]:[]);
+ save.pending=Array.from({length:20},(_,i)=>Array.isArray(old.pending?.[i])?old.pending[i]:[]);
+ save.themeComplete=Array.from({length:20},(_,i)=>!!old.themeComplete?.[i]);
+ save.themePending=Array.from({length:20},(_,i)=>!!old.themePending?.[i]);
+}catch(e){}
+function themeUnlocked(){return PREVIEW||save.themeIndex>=THEME_INDEX||!!save.themeComplete[THEME_INDEX]||!!save.themePending[THEME_INDEX]}
+function persist(){if(PREVIEW)return;save.lastPlayed=Date.now();try{const all=JSON.parse(localStorage.getItem(W2_KEY)||"{}");all[heroId]=save;localStorage.setItem(W2_KEY,JSON.stringify(all))}catch(e){}}
+function economy(){const s=getWorld1Save();return{xp:Number(s.xp)||0,gems:Number(s.gems)||0,gold:Number(s.gold)||0}}
+function addEconomy(xp,gold,gems){if(PREVIEW)return;const all=getWorld1All(),s=all[heroId]||{};s.xp=(Number(s.xp)||0)+xp;s.gold=(Number(s.gold)||0)+gold;s.gems=(Number(s.gems)||0)+gems;s.lastPlayed=Date.now();all[heroId]=s;localStorage.setItem(W1_KEY,JSON.stringify(all))}
+function rank(xp){if(xp>=20000)return"Tidal Guardian";if(xp>=12000)return"Ocean Pathfinder";if(xp>=7000)return"Coral Ranger";return"Water Explorer"}
+function updateHud(){const e=economy();$("heroName").textContent=profile?.name||"Hero";$("heroRank").textContent=rank(e.xp);$("xp").textContent=e.xp.toLocaleString();$("gems").textContent=e.gems.toLocaleString();$("gold").textContent=e.gold.toLocaleString()}
+
+let currentGame=0,session=null,timerHandle=null,bossMode=false,musicOn=true,activeWordAudio=null,activeInstrumentAudio=null;
+const normalMusic=$("normalMusic"),bossMusic=$("bossMusic"),rewardMusic=$("rewardMusic");normalMusic.volume=.17;bossMusic.volume=.27;rewardMusic.volume=.27;
+function stopAll(){[normalMusic,bossMusic,rewardMusic,activeWordAudio,activeInstrumentAudio].filter(Boolean).forEach(a=>{try{a.pause();a.currentTime=0}catch(e){}});activeWordAudio=null;activeInstrumentAudio=null;speechSynthesis?.cancel()}
+function startMusic(kind="normal"){if(!musicOn)return;[normalMusic,bossMusic,rewardMusic].forEach(a=>{a.pause();a.currentTime=0});const a=kind==="boss"?bossMusic:normalMusic;a.play().catch(()=>{})}
+function toggleMusic(){musicOn=!musicOn;$("musicBtn").textContent=musicOn?"♫":"🔇";if(!musicOn)stopAll();else startMusic(bossMode?"boss":"normal")}
+function show(id){screens.forEach(s=>s.classList.toggle("active",s.id===id));window.scrollTo(0,0)}
+function bubbles(){document.querySelectorAll(".bubbles").forEach(box=>{if(box.children.length)return;for(let i=0;i<34;i++){const b=document.createElement("i");b.style.setProperty("--s",(4+Math.random()*17)+"px");b.style.setProperty("--x",Math.random()*100+"%");b.style.setProperty("--d",(9+Math.random()*14)+"s");b.style.setProperty("--drift",(-50+Math.random()*100)+"px");b.style.animationDelay=(-Math.random()*17)+"s";box.appendChild(b)}})}
+function sfx(type="click"){try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);const now=c.currentTime,map={click:[440,.05],good:[760,.14],bad:[175,.16]};const[f,d]=map[type]||map.click;o.frequency.setValueAtTime(f,now);if(type==="good")o.frequency.exponentialRampToValueAtTime(1120,now+d);g.gain.setValueAtTime(.07,now);g.gain.exponentialRampToValueAtTime(.001,now+d);o.start(now);o.stop(now+d)}catch(e){}}
+function speak(text){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="en-GB";u.rate=.78;u.pitch=1.03;speechSynthesis.speak(u)}
+function playAudioWithFallback(src,fallback,kind="word"){
+ if(!src){fallback();return}
+ const audio=new Audio(src);if(kind==="sound")activeInstrumentAudio=audio;else activeWordAudio=audio;
+ let fellBack=false;const useFallback=()=>{if(fellBack)return;fellBack=true;fallback()};audio.addEventListener("error",useFallback,{once:true});audio.play().catch(useFallback)
+}
+function pronounceWord(w){playAudioWithFallback(w.pronunciationAudio,()=>speak(w.spoken||w.word),"word")}
+function playInstrumentSound(w){playAudioWithFallback(w.sound,()=>speak(`Listen to the clue. ${w.clue}`),"sound")}
+window.lexiconiaPronounceWord=pronounceWord;
+function imgHTML(w,large=false){return `<span class="asset-shell ${large?"instrument-large":""}" data-word="${escapeHtml(w.word)}"><span class="asset-fallback" aria-hidden="true">🎵</span><img src="${escapeHtml(w.img)}" alt="" draggable="false" onload="this.parentElement.classList.add('loaded')" onerror="this.parentElement.classList.add('missing')"></span>`}
+function preTeachReady(){if(window.LexiconiaMeta?.isPreTeachComplete)return window.LexiconiaMeta.isPreTeachComplete();return !PREVIEW&&!!save.preTeachSeen?.[THEME_ID]}
+function requestPreTeach(){window.LexiconiaMeta?.showPreTeach?.()||toast("Vocabulary guide is loading. Please try again.")}
+
+function firstIncomplete(){const c=save.completed[THEME_INDEX]||[],p=save.pending[THEME_INDEX]||[];for(let i=0;i<REGULAR_GAME_COUNT;i++)if(!c.includes(i)&&!p.includes(i))return i;for(let i=0;i<REGULAR_GAME_COUNT;i++)if(p.includes(i)&&!c.includes(i))return i;if(!c.includes(BOSS_INDEX))return BOSS_INDEX;return BOSS_INDEX}
+function openTheme(){
+ currentGame=firstIncomplete();const completed=save.completed[THEME_INDEX]||[],pending=save.pending[THEME_INDEX]||[];
+ const learned=preTeachReady(),bossReady=Array.from({length:REGULAR_GAME_COUNT},(_,i)=>i).every(i=>completed.includes(i));
+ const grid=$("gameGrid");grid.innerHTML="";
+ GAMES.forEach((g,i)=>{const done=completed.includes(i),later=pending.includes(i);const progressionUnlocked=i===BOSS_INDEX?(bossReady||done||later):(i<=currentGame||done||later);const unlocked=learned&&(PREVIEW||progressionUnlocked);const now=i===currentGame&&!done;const b=document.createElement("button");b.className=`game-node ${done?"complete":later?"pending":""} ${now?"current":""} ${!unlocked?"locked":""}`;b.disabled=!unlocked;b.innerHTML=`<span class="game-num">${i+1}</span><div class="game-icon">${g.icon}</div><div class="game-name">${g.name}</div><div class="game-stars">${done?"★★★":later?"LATER":learned?"☆☆☆":"LEARN FIRST"}</div>`;b.onclick=()=>{currentGame=i;beginSelectedGame()};grid.appendChild(b)});
+ $("preTeachLockNote").style.display=learned?"none":"block";
+ $("themeProgressText").textContent=pending.length?`${completed.length} complete · ${pending.length} pending`:`${completed.length} / ${GAMES.length} experiences complete`;
+ $("themeProgress").style.width=(completed.length/GAMES.length*100)+"%";
+ $("startCurrentGame").textContent=!learned?"LEARN VOCABULARY FIRST ➜":currentGame===BOSS_INDEX?"START MINI BOSS ➜":`START ${GAMES[currentGame].name.toUpperCase()} ➜`;
+ $("startCurrentGame").disabled=learned&&currentGame===BOSS_INDEX&&!bossReady&&!PREVIEW&&!completed.includes(BOSS_INDEX)&&!pending.includes(BOSS_INDEX);
+ $("continueThemeLater").disabled=!!save.themeComplete[THEME_INDEX];updateHud();show("themeScreen");bossMode=false;startMusic("normal");persist()
+}
+async function preload(){const sources=[...new Set(WORDS.map(w=>w.img))];$("loader").classList.add("show");let done=0;await Promise.all(sources.map(src=>new Promise(resolve=>{const im=new Image(),finish=()=>{done++;$("loaderFill").style.width=(done/sources.length*100)+"%";$("loaderText").textContent=Math.round(done/sources.length*100)+"%";resolve()};im.onload=finish;im.onerror=finish;im.src=src})));$("loader").classList.remove("show")}
+async function beginSelectedGame(){if(!preTeachReady()){requestPreTeach();return}sfx();await preload();if(currentGame===BOSS_INDEX){showBossIntro();return}startGame(GAMES[currentGame].mode)}
+function showBossIntro(){bossMode=true;startMusic("boss");show("bossScreen")}
+function resetSession(mode){clearInterval(timerHandle);const totals={boss:30,memory:15,spell:8,puzzle:8,speed:99};session={mode,round:0,total:totals[mode]||10,correct:0,wrong:0,streak:0,score:0,used:[],hearts:mode==="boss"?10:3,time:45,pairs:null,lock:false,roundErrors:0,bossDeck:mode==="boss"?shuffle(WORDS):null};hideEmergency()}
+function startGame(mode){bossMode=mode==="boss";startMusic(bossMode?"boss":"normal");resetSession(mode);const g=GAMES[bossMode?BOSS_INDEX:currentGame];$("gameTitle").textContent=g.name;$("helpText").textContent=g.help;$("timerStat").style.display=mode==="speed"?"flex":"none";$("heartStat").style.display=mode==="boss"?"flex":"none";$("heartValue").textContent=session.hearts;show("gameScreen");buildMiniProgress();nextRound();if(mode==="speed"){timerHandle=setInterval(()=>{session.time--;$("timerValue").textContent=session.time;if(session.time<=0){clearInterval(timerHandle);finishGame(session.correct>=6)}},1000)}}
+function weakWord(pool=WORDS){const m=save.mastery[THEME_ID]||{},weighted=[];pool.forEach(w=>{const score=m[w.word]||0,n=Math.max(1,5-score);for(let i=0;i<n;i++)weighted.push(w)});return weighted[Math.floor(Math.random()*weighted.length)]}
+function mark(word,ok){if(PREVIEW)return;save.mastery[THEME_ID]=save.mastery[THEME_ID]||{};save.mastery[THEME_ID][word]=(save.mastery[THEME_ID][word]||0)+(ok?1:-1);persist()}
+function nextTarget(pool=WORDS){if(session.mode==="boss"&&pool===WORDS)return session.bossDeck[session.round]||session.bossDeck[0];let t=weakWord(pool),guard=0;while(session.used.includes(t.word)&&guard++<60)t=weakWord(pool);session.used.push(t.word);return t}
+const concept=w=>w.concept||w.word;
+function buildOptions(target,count,pool=WORDS){
+ const candidates=shuffle(pool.filter(w=>w.word!==target.word&&concept(w)!==concept(target))),opts=shuffle([target,...candidates.slice(0,count-1)]);
+ const exact=opts.filter(w=>w.word===target.word).length;
+ if(opts.length!==count||exact!==1||new Set(opts.map(w=>w.word)).size!==opts.length)throw new Error(`Invalid option set for ${target.word}`);
+ return opts
+}
+function distractors(target,n,pool=WORDS){return buildOptions(target,n+1,pool).filter(w=>w.word!==target.word)}
+function uniqueConceptSample(arr,n){const seen=new Set(),out=[];for(const w of shuffle(arr)){const c=concept(w);if(!seen.has(c)){seen.add(c);out.push(w);if(out.length===n)break}}return out}
+function updateSession(){if(!session)return;$("correctStat").textContent=session.correct;$("streakStat").textContent=session.streak;$("scoreStat").textContent=session.score;const denom=session.mode==="speed"?Math.max(1,session.correct+session.wrong):session.total;$("roundFill").style.width=Math.min(100,(session.round/denom)*100)+"%";$("roundCounter").textContent=session.mode==="speed"?`${session.correct} correct`:`${Math.min(session.round+1,session.total)} / ${session.total}`;buildMiniProgress()}
+function buildMiniProgress(){const box=$("miniProgress");box.innerHTML="";const total=Math.min(session?.total||10,12);for(let i=0;i<total;i++){const d=document.createElement("span");d.className="mini-dot "+(i<session?.round?"done":i===session?.round?"on":"");box.appendChild(d)}}
+function setPrompt(html,audioWord=null){$("prompt").innerHTML=html;if(audioWord){const b=document.createElement("button");b.className="speak-btn";b.textContent="🔊";b.onclick=()=>pronounceWord(audioWord);$("prompt").prepend(b)}}
+function showChoices(items,type,target,onPick){
+ if(!items.some(i=>i.word===target.word))throw new Error(`Correct answer missing from options: ${target.word}`);
+ const a=$("answers");a.className=`answers ${type==="image"?"images":"words"}`;a.innerHTML="";
+ items.forEach(item=>{const b=document.createElement("button");b.className=type==="image"?"image-choice":"word-choice";b.dataset.word=item.word;b.dataset.correct=String(item.word===target.word);b.innerHTML=type==="image"?imgHTML(item):escapeHtml(item.word);b.onclick=()=>onPick(b,item);a.appendChild(b)})
+}
+function hideEmergency(){$("emergencyNext").classList.remove("attention");$("lyraTip").textContent="Listen, look carefully, and let the music guide you!"}
+function showEmergency(){$("emergencyNext").classList.add("attention");$("lyraTip").textContent="You can continue now and return later."}
+function useEmergency(){if(PREVIEW){location.href=WORLD2_URL;return}if(save.themeComplete[THEME_INDEX]){location.href=WORLD2_URL;return}clearInterval(timerHandle);speechSynthesis?.cancel();const gi=Number.isInteger(currentGame)?currentGame:firstIncomplete();save.pending[THEME_INDEX]=save.pending[THEME_INDEX]||[];if(!save.pending[THEME_INDEX].includes(gi))save.pending[THEME_INDEX].push(gi);save.themePending[THEME_INDEX]=true;save.themeIndex=Math.max(save.themeIndex,NEXT_THEME_INDEX);persist();showFeedback("SAVED FOR LATER","This challenge is Pending. You received no XP, Gold or Gems.",false,()=>location.href=WORLD2_URL)}
+function standardPick(button,item,target){if(session.lock)return;if(item.word===target.word){session.lock=true;button.classList.add("correct");correctAnswer(target);setTimeout(()=>{session.lock=false;advanceRound()},520)}else{button.classList.add("wrong");wrongAnswer(target);setTimeout(()=>button.classList.remove("wrong"),300)}}
+function correctAnswer(target){session.correct++;session.streak++;session.score+=10+Math.min(session.streak,5)*2;session.roundErrors=0;hideEmergency();mark(target.word,true);sfx("good");updateSession()}
+function wrongAnswer(target){session.wrong++;session.streak=0;session.score=Math.max(0,session.score-5);session.roundErrors++;if(target)mark(target.word,false);sfx("bad");if(session.roundErrors>=3)showEmergency();if(session.mode==="boss"){session.hearts--;$("heartValue").textContent=session.hearts;$("lyraTip").textContent=`${session.hearts} heart${session.hearts===1?"":"s"} left!`;if(session.hearts<=0){session.lock=true;setTimeout(()=>finishGame(false),330)}}updateSession()}
+function advanceRound(){hideEmergency();session.roundErrors=0;session.round++;if(session.mode==="boss"&&session.round>=30){finishGame(true);return}if(session.mode!=="speed"&&session.mode!=="memory"&&session.round>=session.total){finishGame(true);return}nextRound()}
+function nextRound(){hideEmergency();session.roundErrors=0;updateSession();const m=session.mode;if(m==="picture")renderPicture(false);else if(m==="listen")renderPicture(true);else if(m==="word")renderWord();else if(m==="memory")renderMemory();else if(m==="speed")renderPicture(Math.random()<.5);else if(m==="balloon")renderBalloon();else if(m==="spell")renderSpell();else if(m==="missing")renderMissing();else if(m==="truefalse")renderTF();else if(m==="maestro")renderInstrumentMaestro();else if(m==="sound")renderSoundDetective();else if(m==="puzzle")renderSpell();else if(m==="boss")renderBossRound()}
+function renderPicture(audioOnly){const target=nextTarget(),opts=buildOptions(target,6);setPrompt(audioOnly?"Listen carefully.":`Find: <strong style="color:#0b72a0;margin-left:8px">${escapeHtml(target.word)}</strong>`,target);if(audioOnly)setTimeout(()=>pronounceWord(target),180);showChoices(opts,"image",target,(b,i)=>standardPick(b,i,target))}
+function renderWord(){const target=nextTarget();setPrompt(imgHTML(target,true));showChoices(buildOptions(target,4),"word",target,(b,i)=>standardPick(b,i,target))}
+function renderMemory(){if(session.pairs)return;const chosen=uniqueConceptSample(WORDS,15),cards=shuffle(chosen.flatMap((w,i)=>[{id:i,type:"image",w},{id:i,type:"word",w}]));session.pairs={open:[],matched:new Set()};setPrompt("Match all 15 complete pictures with their words.");const a=$("answers");a.className="answers";a.innerHTML='<div id="memoryGrid" class="memory-grid"></div>';const grid=$("memoryGrid");cards.forEach(c=>{const b=document.createElement("button");b.className="memory-card";b.innerHTML=`<span class="memory-face memory-front">✦</span><span class="memory-face memory-back">${c.type==="image"?imgHTML(c.w):escapeHtml(c.w.word)}</span>`;b.onclick=()=>flipMemory(b,c);grid.appendChild(b)})}
+function flipMemory(btn,card){const st=session.pairs;if(st.open.length>=2||btn.classList.contains("flipped")||btn.classList.contains("matched"))return;btn.classList.add("flipped");st.open.push({btn,card});if(st.open.length===2){const[a,b]=st.open;if(a.card.id===b.card.id&&a.card.type!==b.card.type){setTimeout(()=>{a.btn.classList.add("matched");b.btn.classList.add("matched");st.matched.add(a.card.id);st.open=[];session.correct++;session.score+=20;session.round=st.matched.size;mark(a.card.w.word,true);sfx("good");updateSession();if(st.matched.size===15)setTimeout(()=>finishGame(true),400)},280)}else{wrongAnswer(null);setTimeout(()=>{a.btn.classList.remove("flipped");b.btn.classList.remove("flipped");st.open=[]},500)}}}
+function renderBalloon(){const target=nextTarget();setPrompt(`Pop: <strong style="color:#0b72a0;margin-left:8px">${escapeHtml(target.word)}</strong>`,target);const opts=buildOptions(target,6),a=$("answers");a.className="answers";a.innerHTML='<div id="balloonArea" class="balloon-area"></div>';const area=$("balloonArea"),colors=["#ec4d67","#685be7","#36a8d8","#f1a129","#43ad6b","#d354b9"];opts.forEach((w,i)=>{const b=document.createElement("button");b.className="balloon";b.dataset.word=w.word;b.dataset.correct=String(w.word===target.word);b.innerHTML=`<span class="balloon-picture">${imgHTML(w)}</span>`;b.style.background=colors[i%colors.length];b.style.left=(5+(i%3)*31)+"%";b.style.top=(20+Math.floor(i/3)*43)+"%";b.onclick=()=>{if(w.word===target.word){b.style.visibility="hidden";correctAnswer(target);setTimeout(()=>advanceRound(),330)}else{b.classList.add("wrong");wrongAnswer(target);setTimeout(()=>b.classList.remove("wrong"),250)}};area.appendChild(b)})}
+function cleanLetters(word){return word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z]/g,"")}
+function renderSpell(){const target=nextTarget(),clean=cleanLetters(target.word);let letters=shuffle(clean.split(""));if(letters.join("")===clean)letters.reverse();setPrompt(imgHTML(target,true));const a=$("answers");a.className="answers";a.innerHTML='<div id="builtWord" class="built-word"></div><div id="letterBox" class="letters"></div><div class="spell-controls"><button id="deleteLetter" class="spell-control">⌫ DELETE</button><button id="clearWord" class="spell-control">CLEAR</button></div>';const built=$("builtWord"),box=$("letterBox"),chosen=[];let answer="",checked=false;for(let i=0;i<clean.length;i++){const s=document.createElement("span");s.className="built-slot";built.appendChild(s)}const refresh=()=>[...built.children].forEach((s,i)=>s.textContent=answer[i]||"");const del=()=>{if(session.lock||!chosen.length)return;const b=chosen.pop();b.disabled=false;answer=answer.slice(0,-1);checked=false;refresh()};const clear=()=>{if(session.lock)return;chosen.splice(0).forEach(b=>b.disabled=false);answer="";checked=false;refresh()};const evaluate=()=>{if(answer.length!==clean.length||checked)return;if(answer===clean){session.lock=true;correctAnswer(target);setTimeout(()=>{session.lock=false;advanceRound()},430)}else{checked=true;wrongAnswer(target);toast("Try again. Use DELETE or CLEAR.")}};letters.forEach(ch=>{const b=document.createElement("button");b.className="letter-btn";b.textContent=ch;b.onclick=()=>{if(session.lock||checked||b.disabled)return;answer+=ch;chosen.push(b);b.disabled=true;refresh();evaluate()};box.appendChild(b)});$("deleteLetter").onclick=del;$("clearWord").onclick=clear}
+function renderMissing(){const target=nextTarget(),clean=cleanLetters(target.word),ix=Math.floor(Math.random()*clean.length),letter=clean[ix],masked=clean.slice(0,ix)+"_"+clean.slice(ix+1);setPrompt(`${imgHTML(target)}<span style="margin-left:22px;font-size:40px;letter-spacing:6px">${masked}</span>`);const alphabet="abcdefghijklmnopqrstuvwxyz".split(""),opts=shuffle([{word:letter},...sample(alphabet.filter(x=>x!==letter),3).map(x=>({word:x}))]);if(!opts.some(o=>o.word===letter))throw new Error("Missing correct letter option");showChoices(opts,"word",{word:letter},(b,i)=>{if(i.word===letter){b.classList.add("correct");correctAnswer(target);setTimeout(()=>advanceRound(),400)}else{b.classList.add("wrong");wrongAnswer(target);setTimeout(()=>b.classList.remove("wrong"),260)}})}
+function renderTF(){const target=nextTarget(),truth=Math.random()<.55,shown=truth?target:buildOptions(target,2).find(w=>w.word!==target.word);setPrompt(`${imgHTML(target)}<span style="margin-left:23px;font-size:36px">${escapeHtml(shown.word)}</span>`);const a=$("answers");a.className="answers";a.innerHTML='<div class="tf-grid"><button class="tf-btn true">TRUE</button><button class="tf-btn false">FALSE</button></div>';[...a.querySelectorAll(".tf-btn")].forEach((b,i)=>b.onclick=()=>{if((i===0)===truth){b.classList.add("correct");correctAnswer(target);setTimeout(()=>advanceRound(),400)}else{b.classList.add("wrong");wrongAnswer(target);setTimeout(()=>b.classList.remove("wrong"),260)}})}
+function renderInstrumentMaestro(){const target=nextTarget();setPrompt(`<span style="display:grid;place-items:center;gap:8px;width:100%"><span style="font-size:24px;color:#0d587d">🎼 Which instrument is it?</span>${imgHTML(target,true)}<button id="maestroClue" class="clue-btn">🔊 HEAR A CLUE</button></span>`);const opts=buildOptions(target,6);showChoices(opts,"word",target,(b,i)=>standardPick(b,i,target));setTimeout(()=>{const b=$("maestroClue");if(b)b.onclick=()=>speak(target.clue)},0)}
+function renderSoundDetective(){const target=nextTarget();setPrompt(`<div class="sound-panel"><button id="soundOrb" class="sound-orb" aria-label="Play instrument sound or clue">🔊</button><strong>Which instrument do you hear?</strong><small>Real sound files can be added later. Until then, Lyra reads an identifying clue.</small></div>`);const opts=buildOptions(target,6);showChoices(opts,"word",target,(b,i)=>standardPick(b,i,target));const play=()=>playInstrumentSound(target);setTimeout(()=>{$("soundOrb").onclick=play;play()},160)}
+function renderBossRound(){const types=["picture","listen","word","missing","truefalse","maestro","sound","spell"],type=types[session.round%types.length];if(type==="picture")renderPicture(false);else if(type==="listen")renderPicture(true);else if(type==="word")renderWord();else if(type==="missing")renderMissing();else if(type==="truefalse")renderTF();else if(type==="maestro")renderInstrumentMaestro();else if(type==="sound")renderSoundDetective();else renderSpell()}
+function finishGame(success){
+ clearInterval(timerHandle);hideEmergency();
+ if(!success){showFeedback("TRY AGAIN",session.mode==="boss"?"The Guardian was strong. Recover your hearts and try again.":"Reach at least 6 correct answers.",false,()=>startGame(session.mode));return}
+ const isBoss=currentGame===BOSS_INDEX||session.mode==="boss";
+ if(PREVIEW){bossMode=false;showFeedback("TEACHER PREVIEW COMPLETE","No progress, rewards, Weekly Streak, or Invicto data were saved.",true,()=>openTheme());return}
+ const alreadyTheme=save.themeComplete[THEME_INDEX],xp=isBoss?700:160+session.correct*12,gold=isBoss?260:40+session.correct*4,gems=isBoss?12:(session.wrong===0?3:1);
+ save.pending[THEME_INDEX]=(save.pending[THEME_INDEX]||[]).filter(i=>i!==currentGame);if(isBoss)save.themePending[THEME_INDEX]=false;
+ const arr=save.completed[THEME_INDEX]||[];if(!arr.includes(currentGame))arr.push(currentGame);save.completed[THEME_INDEX]=arr;
+ if(isBoss){save.themeComplete[THEME_INDEX]=true;save.themeIndex=Math.max(save.themeIndex,NEXT_THEME_INDEX);if(!alreadyTheme)save.keys=(Number(save.keys)||0)+1}
+ addEconomy(xp,gold,gems);persist();updateHud();bossMode=false;
+ showFeedback(isBoss?"CRYSTAL RESTORED!":"GAME COMPLETE!",`+${xp} XP · +${gold} Gold · +${gems} Gems`,true,()=>{if(isBoss){$("rewardText").textContent=`+${xp} XP · +${gold} Gold · +${gems} Gems · ${alreadyTheme?"Key already collected":"1 Key"}`;stopAll();if(musicOn)rewardMusic.play().catch(()=>{});show("completeScreen")}else openTheme()})
+}
+function showFeedback(title,text,good,cb){$("feedbackIcon").textContent=good?"✨":"🎵";$("feedbackTitle").textContent=title;$("feedbackText").textContent=text;$("feedback").classList.add("show");setTimeout(()=>{$("feedback").classList.remove("show");cb&&cb()},900)}
+function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1250)}
+function stressOptions(iterations=1000){let sets=0;for(let i=0;i<iterations;i++)for(const w of WORDS){for(const count of [2,4,6]){const opts=buildOptions(w,count);if(!opts.some(o=>o.word===w.word))throw new Error(`Stress test failed for ${w.word}`);sets++}}return{ok:true,sets,iterations}}
+window.LexiconiaTheme05QA={validation:CONTENT_VALIDATION,words:WORDS,games:GAMES,stressOptions,buildOptions};
+
+$("backWorld2").onclick=$("returnWaterWorld").onclick=()=>location.href=WORLD2_URL;
+$("gateBack").onclick=()=>location.href=WORLD2_URL;
+$("startCurrentGame").onclick=()=>preTeachReady()?beginSelectedGame():requestPreTeach();
+$("exitGame").onclick=()=>{clearInterval(timerHandle);stopAll();openTheme()};
+$("continueThemeLater").onclick=$("emergencyNext").onclick=$("continueBossLater").onclick=useEmergency;
+$("startBoss").onclick=()=>startGame("boss");
+$("musicBtn").onclick=toggleMusic;
+$("fullBtn").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});
+document.addEventListener("pointerdown",()=>{if(musicOn&&normalMusic.paused&&!bossMode)normalMusic.play().catch(()=>{})},{once:true});
+document.addEventListener("lexiconia:preteach-complete",()=>openTheme());
+
+bubbles();updateHud();
+if(PREVIEW){const badge=document.createElement("div");badge.className="preview-badge";badge.textContent="🛠️ TEACHER PREVIEW · all experiences unlock after Pre-Teach · progress and rewards are not saved";document.body.appendChild(badge)}
+if(!world1Complete()){$("app").style.display="none";$("gateTitle").textContent="Water World Locked";$("gateText").textContent="Complete all 20 Themes in World 1 before entering Water World.";$("gate").classList.add("show")}
+else if(!themeUnlocked()){$("app").style.display="none";$("gateTitle").textContent="Theme 05 Locked";$("gateText").textContent="Complete Hobbies—or use Continue Adventure there—to unlock Musical Instruments.";$("gate").classList.add("show")}
+else openTheme();
+
+</script>
+<script src="../../assets/world2/lexiconia-meta.js"></script>
+</body>
+</html>
