@@ -32,6 +32,8 @@ body::before{content:"";position:fixed;inset:-18px;background:linear-gradient(rg
 .sound-panel strong{font-size:clamp(24px,3vw,38px);color:#0b5c87}.sound-panel small{font-size:15px;color:#536875}.clue-btn{border:3px solid #e0b84a;border-radius:16px;padding:11px 17px;background:linear-gradient(#8b59c3,#4f2779);color:#fff;font-weight:900;box-shadow:0 7px 0 #2c143f}
 .preview-badge{position:fixed;left:50%;top:72px;transform:translateX(-50%);z-index:140;background:#5b245f;color:#fff7b0;border:2px solid #ffd45b;border-radius:999px;padding:8px 14px;font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.35);font-size:13px;white-space:nowrap}
 .preteach-lock-note{text-align:center;margin:14px auto 0;width:min(780px,94%);padding:12px 16px;border:2px solid #ffd45b;border-radius:16px;background:rgba(4,32,64,.92);font-weight:900;color:#fff2a0}
+.preteach-skip-btn{display:block;margin:10px auto 0;border:2px solid rgba(255,255,255,.42);border-radius:13px;background:rgba(255,255,255,.08);color:#dff5ff;padding:8px 14px;font-size:12px;font-weight:900;cursor:pointer}.preteach-skip-btn:hover{background:rgba(255,255,255,.14);color:#fff}.t05-preteach-overlay,.t05-skip-overlay{position:fixed;inset:0;z-index:10050;display:none;place-items:center;padding:16px;background:rgba(1,14,34,.94);backdrop-filter:blur(10px)}.t05-preteach-overlay.show,.t05-skip-overlay.show{display:grid}.t05-preteach-card{width:min(1080px,97vw);height:min(890px,96vh);display:grid;grid-template-rows:auto minmax(0,1fr) auto;border:4px solid #e0b94e;border-radius:28px;background:linear-gradient(180deg,#073d6b,#031b39);box-shadow:0 24px 75px rgba(0,0,0,.62);overflow:hidden}.t05-preteach-head{text-align:center;padding:13px 16px 8px}.t05-preteach-head h2{margin:0;color:#fff0a0;font:900 clamp(29px,4vw,48px) Georgia,serif}.t05-preteach-head p{margin:5px 0;color:#dff8ff;font-weight:800}.t05-preteach-counter{display:inline-block;margin-top:4px;padding:5px 13px;border:2px solid #d8b348;border-radius:999px;background:#062d50;color:#fff;font-weight:900}.t05-preteach-body{min-height:0;display:grid;grid-template-rows:minmax(260px,1fr) auto;gap:7px;padding:8px 18px}.t05-preteach-img{position:relative;display:grid;place-items:center;min-height:0;border:3px solid #d5b356;border-radius:22px;background:linear-gradient(145deg,#fff,#e5f5fb);overflow:hidden}.t05-preteach-img img{width:100%;height:100%;object-fit:contain;object-position:center;padding:12px}.t05-preteach-img.missing img{display:none}.t05-preteach-fallback{position:absolute;inset:0;display:none;place-items:center;text-align:center;color:#0d6f98;font:900 clamp(30px,5vw,64px) Georgia,serif;padding:20px}.t05-preteach-img.missing .t05-preteach-fallback{display:grid}.t05-preteach-word{text-align:center}.t05-preteach-en{color:#fff2a0;font:900 clamp(32px,4.5vw,54px) Georgia,serif}.t05-preteach-es{color:#9cf0ff;font-size:clamp(20px,2.4vw,29px);font-weight:900;margin-top:3px}.t05-pronounce{margin-top:7px;width:56px;height:56px;border-radius:50%;border:3px solid #ffd55c;background:linear-gradient(#2dbfd1,#0875a9);color:white;font-size:25px;cursor:pointer}.t05-preteach-actions{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:12px 18px 16px;background:rgba(2,19,44,.96)}.t05-nav,.t05-review-close{border:3px solid #ffd55c;border-radius:16px;color:#fff;background:linear-gradient(#36b8cd,#0874aa);padding:11px 17px;font-weight:900;cursor:pointer}.t05-nav.next{justify-self:end;min-width:190px}.t05-nav.prev{justify-self:start}.t05-nav:disabled{opacity:.4;cursor:not-allowed}.t05-review-close{background:linear-gradient(#9d5cca,#542779);border-color:#d7a8ef}.t05-skip-card{width:min(560px,92vw);text-align:center;padding:28px;border:4px solid #e0b94e;border-radius:26px;background:linear-gradient(180deg,#073d6b,#031b39);box-shadow:0 24px 75px rgba(0,0,0,.62)}.t05-skip-card h2{margin:0 0 10px;color:#fff0a0;font:900 31px Georgia,serif}.t05-skip-card p{color:#e4f7ff;line-height:1.5;font-weight:750}.t05-skip-actions{display:flex;justify-content:center;gap:11px;flex-wrap:wrap;margin-top:19px}.t05-skip-actions button{border:3px solid #ffd55c;border-radius:15px;padding:10px 18px;font-weight:900;cursor:pointer}.t05-skip-continue{background:linear-gradient(#efbd47,#b96c0d);color:#231503}.t05-skip-back{background:linear-gradient(#36b8cd,#0874aa);color:#fff}@media(max-width:700px){.t05-preteach-card{height:98vh}.t05-preteach-actions{padding:8px;grid-template-columns:auto 1fr auto}.t05-nav,.t05-review-close{font-size:11px;padding:8px 10px}.t05-nav.next{min-width:0}.t05-preteach-body{padding:6px 9px}.t05-preteach-img img{padding:7px}}
+
 @media(max-width:760px){.instrument-large{height:290px!important;min-height:220px!important}.preview-badge{top:68px;font-size:10px;max-width:94vw;white-space:normal;text-align:center}}
 </style>
 </head>
@@ -41,7 +43,7 @@ body::before{content:"";position:fixed;inset:-18px;background:linear-gradient(rg
 <div id="app">
 <div class="topbar"><div class="profile"><img src="../../assets/world2/lyra.jpg" alt="Lyra"><div><div id="heroName" class="profile-name">Hero</div><div id="heroRank" class="profile-rank">Water Explorer</div></div></div><div class="hud"><div class="currency">⭐ <b id="xp">0</b></div><div class="currency">💎 <b id="gems">0</b></div><div class="currency">🪙 <b id="gold">0</b></div><div class="top-actions"><button id="musicBtn" class="round-btn" aria-label="Music">♫</button><button id="fullBtn" class="round-btn" aria-label="Fullscreen">⛶</button></div></div></div>
 
-<section id="themeScreen" class="screen active"><div class="bubbles"></div><div class="theme-wrap"><div class="theme-header"><h1>MUSICAL INSTRUMENTS</h1><p>Theme 05 · Learn 30 instruments before beginning the adventure.</p></div><div id="preTeachLockNote" class="preteach-lock-note">📚 Pre-Teach Vocabulary is mandatory. Study all 30 instruments before entering the games.</div><div id="gameGrid" class="game-grid"></div><div class="theme-bottom"><button id="backWorld2" class="back-btn" aria-label="Back to Water World">←</button><button id="continueThemeLater" class="emergency-btn">CONTINUE ADVENTURE ➜</button><div class="progress-card"><strong id="themeProgressText">0 / 13 experiences complete</strong><div class="progress-line"><div id="themeProgress" class="progress-fill"></div></div></div><button id="startCurrentGame" class="fantasy-btn">LEARN VOCABULARY FIRST ➜</button></div></div></section>
+<section id="themeScreen" class="screen active"><div class="bubbles"></div><div class="theme-wrap"><div class="theme-header"><h1>MUSICAL INSTRUMENTS</h1><p>Theme 05 · Learn 30 instruments before beginning the adventure.</p></div><div id="preTeachLockNote" class="preteach-lock-note">📚 Pre-Teach Vocabulary is mandatory. Study all 30 instruments before entering the games.<button id="skipPreTeach" class="preteach-skip-btn" type="button">HAVING TROUBLE? · SKIP FOR NOW</button></div><div id="gameGrid" class="game-grid"></div><div class="theme-bottom"><button id="backWorld2" class="back-btn" aria-label="Back to Water World">←</button><button id="continueThemeLater" class="emergency-btn">CONTINUE ADVENTURE ➜</button><div class="progress-card"><strong id="themeProgressText">0 / 13 experiences complete</strong><div class="progress-line"><div id="themeProgress" class="progress-fill"></div></div></div><button id="startCurrentGame" class="fantasy-btn">LEARN VOCABULARY FIRST ➜</button></div></div></section>
 
 <section id="gameScreen" class="screen"><div class="bubbles"></div><div class="game-wrap"><aside class="side-panel"><div class="lyra-card"><img src="../../assets/world2/lyra.jpg" alt="Lyra"><h2>Lyra</h2></div><div id="lyraTip" class="lyra-tip">Listen, look carefully, and let the music guide you!</div><div id="miniProgress" class="mini-progress"></div></aside><main class="game-panel"><div class="game-banner"><h1 id="gameTitle">Picture Quest</h1><small>World 2 · Theme 05 · Musical Instruments</small></div><div id="prompt" class="prompt"></div><div id="answers" class="answers images"></div><div class="game-footer"><button id="exitGame" class="back-btn">←</button><button id="emergencyNext" class="emergency-btn">CONTINUE ADVENTURE ➜</button><div class="round-track"><div id="roundFill" class="round-fill"></div></div><strong id="roundCounter">1 / 10</strong></div></main><aside class="help-panel"><h3>HOW TO PLAY</h3><p id="helpText">Choose the correct answer.</p><div class="session-stats"><div class="stat"><span>Correct</span><b id="correctStat">0</b></div><div class="stat"><span>Streak</span><b id="streakStat">0</b></div><div class="stat"><span>Score</span><b id="scoreStat">0</b></div><div id="timerStat" class="stat" style="display:none"><span>Time</span><b id="timerValue">45</b></div><div id="heartStat" class="stat" style="display:none"><span>Hearts</span><b id="heartValue">10</b></div></div></aside></div></section>
 
@@ -544,8 +546,48 @@ function pronounceWord(w){playAudioWithFallback(w.pronunciationAudio,()=>speak(w
 function playInstrumentSound(w){playAudioWithFallback(w.sound,()=>speak(`Listen to the clue. ${w.clue}`),"sound")}
 window.lexiconiaPronounceWord=pronounceWord;
 function imgHTML(w,large=false){return `<span class="asset-shell ${large?"instrument-large":""}" data-word="${escapeHtml(w.word)}"><span class="asset-fallback" aria-hidden="true">🎵</span><img src="${escapeHtml(w.img)}" alt="" draggable="false" onload="this.parentElement.classList.add('loaded')" onerror="this.parentElement.classList.add('missing')"></span>`}
-function preTeachReady(){if(window.LexiconiaMeta?.isPreTeachComplete)return window.LexiconiaMeta.isPreTeachComplete();return !PREVIEW&&!!save.preTeachSeen?.[THEME_ID]}
-function requestPreTeach(){window.LexiconiaMeta?.showPreTeach?.()||toast("Vocabulary guide is loading. Please try again.")}
+const THEME05_PRETEACH_SKIP_KEY=`lexiconia.theme05.preteach.skip.${PREVIEW?"teacher":"student"}`;
+let theme05PreviewPreTeachComplete=false,theme05SessionSkip=false,theme05PreTeachIndex=0,theme05PreTeachReview=false;
+function preTeachSkipped(){if(theme05SessionSkip)return true;try{return sessionStorage.getItem(THEME05_PRETEACH_SKIP_KEY)==="1"}catch(e){return false}}
+function preTeachReady(){
+ if(preTeachSkipped()||theme05PreviewPreTeachComplete)return true;
+ try{if(window.LexiconiaMeta?.isPreTeachComplete?.())return true}catch(e){}
+ return !PREVIEW&&!!save.preTeachSeen?.[THEME_ID]
+}
+function ensureTheme05PreTeach(){
+ if($("theme05PreTeachOverlay"))return;
+ const overlay=document.createElement("div");overlay.id="theme05PreTeachOverlay";overlay.className="t05-preteach-overlay";
+ overlay.innerHTML=`<div class="t05-preteach-card"><div class="t05-preteach-head"><h2>📚 PRE-TEACH VOCABULARY</h2><p>Musical Instruments · Learn the 30 words before beginning the games.</p><span id="t05Counter" class="t05-preteach-counter"></span></div><div class="t05-preteach-body"><div id="t05Image" class="t05-preteach-img"><div id="t05Fallback" class="t05-preteach-fallback">🎵</div><img id="t05Img" alt="" draggable="false"></div><div class="t05-preteach-word"><div id="t05English" class="t05-preteach-en"></div><div id="t05Spanish" class="t05-preteach-es"></div><button id="t05Pronounce" class="t05-pronounce" type="button" aria-label="Listen to British pronunciation">🔊</button></div></div><div class="t05-preteach-actions"><button id="t05Prev" class="t05-nav prev" type="button">← PREVIOUS</button><button id="t05Close" class="t05-review-close" type="button">CLOSE REVIEW</button><button id="t05Next" class="t05-nav next" type="button">NEXT WORD ➜</button></div></div>`;
+ document.body.appendChild(overlay);
+ $("t05Prev").onclick=()=>renderTheme05PreTeach(theme05PreTeachIndex-1,true);
+ $("t05Next").onclick=()=>theme05PreTeachIndex<WORDS.length-1?renderTheme05PreTeach(theme05PreTeachIndex+1,true):completeTheme05PreTeach();
+ $("t05Close").onclick=()=>{if(theme05PreTeachReview||preTeachReady())closeTheme05PreTeach()};
+ $("t05Pronounce").onclick=()=>{const w=WORDS[theme05PreTeachIndex];try{pronounceWord(w)}catch(e){try{speak(w.spoken||w.word)}catch(_){}}};
+}
+function renderTheme05PreTeach(index,autoPronounce=false){
+ ensureTheme05PreTeach();theme05PreTeachIndex=Math.max(0,Math.min(WORDS.length-1,index));const w=WORDS[theme05PreTeachIndex],shell=$("t05Image"),img=$("t05Img");
+ shell.classList.remove("missing");img.onload=()=>shell.classList.remove("missing");img.onerror=()=>shell.classList.add("missing");
+ try{img.src=w.img||""}catch(e){shell.classList.add("missing")};img.alt=w.word||"Instrument";$("t05Fallback").textContent=w.word||"🎵";
+ $("t05Counter").textContent=`${String(theme05PreTeachIndex+1).padStart(2,"0")} / ${WORDS.length}`;$("t05English").textContent=w.word;$("t05Spanish").textContent=w.es||"—";$("t05Prev").disabled=theme05PreTeachIndex===0;$("t05Next").textContent=theme05PreTeachIndex===WORDS.length-1?"I'M READY — ENTER THEME":"NEXT WORD ➜";$("t05Close").style.visibility=(theme05PreTeachReview||preTeachReady())?"visible":"hidden";
+ if(autoPronounce)setTimeout(()=>{try{pronounceWord(w)}catch(e){}},180)
+}
+function openTheme05PreTeach(review=false){
+ ensureTheme05PreTeach();theme05PreTeachReview=review||preTeachReady();theme05PreTeachIndex=0;$("theme05PreTeachOverlay").classList.add("show");renderTheme05PreTeach(0,true);window.scrollTo(0,0)
+}
+function closeTheme05PreTeach(){$("theme05PreTeachOverlay")?.classList.remove("show");try{speechSynthesis.cancel()}catch(e){}}
+function completeTheme05PreTeach(){
+ if(PREVIEW)theme05PreviewPreTeachComplete=true;else{save.preTeachSeen=save.preTeachSeen||{};save.preTeachSeen[THEME_ID]=true;persist()}
+ try{sessionStorage.removeItem(THEME05_PRETEACH_SKIP_KEY)}catch(e){};closeTheme05PreTeach();document.dispatchEvent(new CustomEvent("lexiconia:preteach-complete",{detail:{themeId:THEME_ID,preview:PREVIEW,source:"theme05-patch-v1.1"}}));openTheme()
+}
+function requestPreTeach(){
+ let opened=false;
+ try{if(window.LexiconiaMeta?.showPreTeach){window.LexiconiaMeta.showPreTeach();opened=!!document.getElementById("lexPreteachOverlay")?.classList.contains("show")}}catch(e){opened=false}
+ if(opened)return;
+ openTheme05PreTeach(false)
+}
+function showTheme05SkipDialog(){
+ let overlay=$("theme05SkipOverlay");if(!overlay){overlay=document.createElement("div");overlay.id="theme05SkipOverlay";overlay.className="t05-skip-overlay";overlay.innerHTML=`<div class="t05-skip-card"><h2>SKIP VOCABULARY PREPARATION?</h2><p>Learning the vocabulary first is recommended.<br><br>You can continue now, but some activities may be more difficult.</p><div class="t05-skip-actions"><button id="t05SkipBack" class="t05-skip-back" type="button">GO BACK</button><button id="t05SkipContinue" class="t05-skip-continue" type="button">CONTINUE</button></div></div>`;document.body.appendChild(overlay);$("t05SkipBack").onclick=()=>overlay.classList.remove("show");$("t05SkipContinue").onclick=()=>{theme05SessionSkip=true;try{sessionStorage.setItem(THEME05_PRETEACH_SKIP_KEY,"1")}catch(e){};overlay.classList.remove("show");openTheme();toast("Games unlocked for this session. You can review vocabulary at any time.")}}overlay.classList.add("show")
+}
 
 function firstIncomplete(){const c=save.completed[THEME_INDEX]||[],p=save.pending[THEME_INDEX]||[];for(let i=0;i<REGULAR_GAME_COUNT;i++)if(!c.includes(i)&&!p.includes(i))return i;for(let i=0;i<REGULAR_GAME_COUNT;i++)if(p.includes(i)&&!c.includes(i))return i;if(!c.includes(BOSS_INDEX))return BOSS_INDEX;return BOSS_INDEX}
 function openTheme(){
@@ -625,6 +667,7 @@ window.LexiconiaTheme05QA={validation:CONTENT_VALIDATION,words:WORDS,games:GAMES
 $("backWorld2").onclick=$("returnWaterWorld").onclick=()=>location.href=WORLD2_URL;
 $("gateBack").onclick=()=>location.href=WORLD2_URL;
 $("startCurrentGame").onclick=()=>preTeachReady()?beginSelectedGame():requestPreTeach();
+$("skipPreTeach").onclick=showTheme05SkipDialog;
 $("exitGame").onclick=()=>{clearInterval(timerHandle);stopAll();openTheme()};
 $("continueThemeLater").onclick=$("emergencyNext").onclick=$("continueBossLater").onclick=useEmergency;
 $("startBoss").onclick=()=>startGame("boss");
@@ -634,12 +677,31 @@ document.addEventListener("pointerdown",()=>{if(musicOn&&normalMusic.paused&&!bo
 document.addEventListener("lexiconia:preteach-complete",()=>openTheme());
 
 bubbles();updateHud();
-if(PREVIEW){const badge=document.createElement("div");badge.className="preview-badge";badge.textContent="🛠️ TEACHER PREVIEW · all experiences unlock after Pre-Teach · progress and rewards are not saved";document.body.appendChild(badge)}
+if(PREVIEW){const badge=document.createElement("div");badge.className="preview-badge";badge.textContent="🛠️ TEACHER PREVIEW · Pre-Teach and Skip can both be tested · progress and rewards are not saved";document.body.appendChild(badge)}
 if(!world1Complete()){$("app").style.display="none";$("gateTitle").textContent="Water World Locked";$("gateText").textContent="Complete all 20 Themes in World 1 before entering Water World.";$("gate").classList.add("show")}
 else if(!themeUnlocked()){$("app").style.display="none";$("gateTitle").textContent="Theme 05 Locked";$("gateText").textContent="Complete Hobbies—or use Continue Adventure there—to unlock Musical Instruments.";$("gate").classList.add("show")}
 else openTheme();
 
 </script>
 <script src="../../assets/world2/lexiconia-meta.js"></script>
+
+<script>
+/* Theme 05 PATCH v1.1: if the shared meta guide is unavailable, the local guide remains the fail-safe. */
+window.addEventListener("load",()=>{
+ try{
+  let review=document.getElementById("lexReviewVocabulary");
+  if(review){
+   review.addEventListener("click",()=>setTimeout(()=>{
+    const shared=document.getElementById("lexPreteachOverlay");
+    if(!shared||!shared.classList.contains("show"))openTheme05PreTeach(true);
+   },80));
+  }else{
+   review=document.createElement("button");
+   review.id="theme05LocalReviewVocabulary";review.className="preteach-skip-btn";review.type="button";review.textContent="📚 REVIEW VOCABULARY";review.onclick=()=>openTheme05PreTeach(true);
+   document.querySelector(".theme-header")?.insertAdjacentElement("afterend",review);
+  }
+ }catch(e){}
+});
+</script>
 </body>
 </html>
