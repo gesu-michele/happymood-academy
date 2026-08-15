@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#053f68">
+<meta name="lexiconia-build" content="theme07-final-v1.0.0">
+<title>Lexiconia · Theme 07 · Days & Months</title>
+<link rel="stylesheet" href="../../assets/world2/days-months/theme07.css">
+</head>
+<body>
+<section id="gateScreen" class="screen gate active"><div class="gate-card panel"><div style="font-size:90px">🔒📅</div><h1>Theme 07</h1><p>Complete Theme 06 — Toys to unlock Days & Months. Teacher Preview bypasses this gate.</p><button id="gateBack" class="btn gold">RETURN TO WATER WORLD</button></div></section>
+<div id="app" class="hidden">
+<header class="topbar">
+  <div class="profile"><div class="avatar">📅</div><div><strong id="heroName">Hero</strong><small id="heroRank">Water Scholar</small></div></div>
+  <div class="currency-row"><div class="currency">⭐ <b id="xpValue">0</b><span>XP</span></div><div class="currency">💎 <b id="gemValue">0</b><span>GEMS · LEARNING HELP</span></div><div class="currency">🪙 <b id="coinValue">0</b><span>COINS · GAMEPLAY</span></div></div>
+  <div class="meta-row"><div id="weeklyBadge" class="meta-badge"></div><div id="invictoBadge" class="meta-badge"></div><button id="recordButton" class="icon-btn" title="Academic Record">📊</button><button id="musicButton" class="icon-btn" title="Sound">♫</button><button id="fullButton" class="icon-btn" title="Fullscreen">⛶</button></div>
+</header>
+
+<section id="homeScreen" class="screen">
+<main class="theme-shell">
+  <header class="hero-header"><h1>DAYS & MONTHS</h1><h2>World 2 · Theme 07</h2><p>Pronunciation, spelling, sequence, calendar literacy and knowledge-driven reasoning. This is the first Language Challenge Theme of Water World.</p><span id="previewRibbon" class="preview-ribbon hidden">🛠️ TEACHER PREVIEW · NOT SAVED</span></header>
+  <section class="status-grid">
+    <article class="status-card panel"><h3>📚 Mandatory Preparation</h3><p id="preteachSummary"></p><div class="progress-line"><div id="preteachProgress" class="progress-fill"></div></div><strong id="preteachCount" style="float:right;margin-top:5px;color:#fff1a0"></strong><div class="status-actions"><button id="preteachLanguage" class="btn small">A · NEW LANGUAGE</button><button id="preteachRecall" class="btn small">B · QUICK RECALL</button><button id="preteachKnowledge" class="btn small">C · KNOWLEDGE BOOST</button><button id="reviewVocabulary" class="btn purple small">REVIEW</button></div></article>
+    <article class="status-card panel"><h3>🎮 Experience Progress</h3><p>Completion and Mastery are measured separately.</p><div class="progress-line"><div id="experienceProgress" class="progress-fill"></div></div><strong id="experienceCount" style="display:block;margin-top:8px;color:#fff1a0"></strong><p>Difficulty: <span id="difficultyLabel" class="difficulty-pill">FOUNDATION</span></p></article>
+    <article class="status-card panel"><h3>👑 Academic Mastery</h3><div id="masteryNumber" class="mastery-number">0%</div><div id="masteryStatus" class="mastery-label">📘 NEEDS REVIEW</div><p>Active Needs Review targets: <strong id="needsCount">0</strong></p></article>
+  </section>
+  <section class="panel" style="margin-top:15px;padding:15px 18px"><h3 style="margin:0;color:#fff1a0;font:900 23px Georgia,serif">🐾 Companion Collection</h3><p style="margin:5px 0;color:#cce8f4">Six silhouettes, unlocked progressively. Every unlocked companion remains selectable.</p><div id="companionRow" class="companion-row"></div></section>
+  <div class="section-title"><div><h2>Water World Experiences</h2><p>18 core experiences + personalised review + final independent Mastery.</p></div><button id="backWorld2" class="btn ghost">← WATER WORLD</button></div>
+  <section id="gameGrid" class="game-grid"></section>
+</main>
+</section>
+
+<section id="preteachScreen" class="screen">
+<main class="preteach-layout">
+  <header class="preteach-top panel"><div><h1 id="preteachModeTitle">A. NEW LANGUAGE</h1><div class="progress-line"><div id="preteachProgressBar" class="progress-fill"></div></div></div><div class="preteach-tabs"><button class="tab" data-mode="language">NEW LANGUAGE</button><button class="tab" data-mode="recall">QUICK RECALL</button><button class="tab" data-mode="knowledge">KNOWLEDGE BOOST</button></div></header>
+  <section class="slide-stage panel"><div id="preteachVisual" class="visual-card"><img id="preteachImage" alt=""><div id="fallbackWord" class="fallback-word">Monday</div></div><article id="preteachWordPanel" class="word-panel"></article></section>
+  <footer class="preteach-controls panel"><button id="preteachPrev" class="btn prev">← PREVIOUS</button><button id="preteachExit" class="btn ghost">RETURN TO THEME</button><button id="preteachNext" class="btn next gold">NEXT ➜</button></footer>
+</main>
+</section>
+
+<section id="gameScreen" class="screen">
+<main class="game-layout">
+  <aside class="side-card panel"><h3>🎯 HOW TO PLAY</h3><p id="gameHow">Read the challenge and choose carefully.</p><button id="helpButton" class="btn purple help-btn">💎 NEED HELP?</button><div id="helpNote" class="help-note"></div><button id="exitGame" class="btn ghost" style="width:100%;margin-top:10px">← LEAVE EXPERIENCE</button></aside>
+  <section class="game-main panel"><header class="game-title"><div><h1 id="gameTitle">Game</h1><small id="gameSubtitle">Theme 07</small></div><span id="roundCounter" style="color:#fff1a0;font-weight:900">1 / 8</span></header><div class="progress-line"><div id="roundProgress" class="progress-fill"></div></div><article class="prompt-card"><div id="promptKicker" class="prompt-kicker">CHALLENGE</div><div id="promptText" class="prompt-text"></div><div id="promptSub" class="prompt-sub"></div></article><div id="challengeArea" class="challenge-area"></div><footer class="game-footer"><span>Adaptive tier:</span><span id="difficultyLabelGame" class="difficulty-pill">FOUNDATION</span><div class="progress-line"><div id="roundProgressMirror" class="progress-fill"></div></div></footer></section>
+  <aside class="side-card panel"><h3>📊 SESSION</h3><div class="stat-list"><div class="stat-box"><span>Correct</span><b id="correctStat">0</b></div><div class="stat-box"><span>Wrong</span><b id="wrongStat">0</b></div><div class="stat-box"><span>Streak</span><b id="sessionStreak">0</b></div><div class="stat-box"><span>Score</span><b id="scoreStat">0</b></div><div id="timerWrap" class="stat-box hidden"><span>Time</span><b id="timerStat">60</b></div><div id="heartsWrap" class="stat-box hidden"><span>Hearts</span><b id="heartsStat">❤️❤️❤️</b></div></div><p style="margin-top:13px;color:#fff1ae;font-size:12px">Wrong word = academic error.<br>Motor miss/rock = no Mastery penalty.</p></aside>
+</main>
+</section>
+
+<section id="completeScreen" class="screen"><main class="complete-wrap"><article class="complete-card panel"><div id="completeIcon" style="font-size:100px">👑</div><h1 id="completeTitle">PERFECT MASTERY</h1><p id="completeMessage"></p><div id="completeReward" style="font-size:24px;color:#fff1a0;font-weight:900;margin:18px"></div><div id="recordContent"></div><div class="modal-actions"><button id="completeRecord" class="btn purple">ACADEMIC RECORD</button><button id="completeReturn" class="btn gold">RETURN TO WATER WORLD</button></div></article></main></section>
+</div>
+
+<button id="teacherButton" class="teacher-button hidden" title="Teacher Lab">🛠️</button><aside id="teacherLab" class="teacher-lab panel hidden"><button id="teacherClose" class="modal-close">×</button><h2>🛠️ TEACHER LAB</h2><div id="teacherLabBody"></div></aside>
+<div id="modalLayer" class="modal-layer" aria-hidden="true"><div class="modal"><button id="modalClose" class="modal-close">×</button><h2 id="modalTitle"></h2><div id="modalBody"></div><div id="modalActions" class="modal-actions"></div></div></div>
+<div id="toast" class="toast"></div><div id="confetti" class="confetti"></div>
+<script>window.LEXICONIA_THEME07_CONFIG={forceTeacher:false,assetRoot:'../../assets/world2/days-months/words/',world2Url:'../../world2.html',themeIndex:6,previousThemeIndex:5,build:'theme07-final-v1.0.0'};</script>
+<script src="../../assets/world2/days-months/theme07.js"></script>
+</body>
+</html>
