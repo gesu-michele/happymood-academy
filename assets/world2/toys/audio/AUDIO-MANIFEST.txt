@@ -1,0 +1,3 @@
+OPTIONAL HUMAN AUDIO ARCHITECTURE
+
+The Theme first attempts a matching MP3 filename for each PNG (for example 01-doll.mp3). If no real audio file is available, it automatically falls back to SpeechSynthesis with en-GB pronunciation. No audio files are required in v1.0.
