@@ -1,0 +1,35 @@
+THEME 08 — OPTIONAL HUMAN AUDIO MANIFEST
+
+Optional future files:
+01-eat.mp3 — Eat
+02-drink.mp3 — Drink
+03-sleep.mp3 — Sleep
+04-walk.mp3 — Walk
+05-run.mp3 — Run
+06-jump.mp3 — Jump
+07-sit.mp3 — Sit
+08-stand.mp3 — Stand
+09-read.mp3 — Read
+10-write.mp3 — Write
+11-speak.mp3 — Speak
+12-listen.mp3 — Listen
+13-look.mp3 — Look
+14-watch.mp3 — Watch
+15-open.mp3 — Open
+16-close.mp3 — Close
+17-take.mp3 — Take
+18-give.mp3 — Give
+19-put.mp3 — Put
+20-make.mp3 — Make
+21-play.mp3 — Play
+22-draw.mp3 — Draw
+23-sing.mp3 — Sing
+24-dance.mp3 — Dance
+25-swim.mp3 — Swim
+26-throw.mp3 — Throw
+27-catch.mp3 — Catch
+28-push.mp3 — Push
+29-pull.mp3 — Pull
+30-carry.mp3 — Carry
+
+If a file is absent, British SpeechSynthesis is used automatically.
