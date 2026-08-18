@@ -1,0 +1,5 @@
+THEME 10 — OPTIONAL HUMAN AUDIO MANIFEST
+
+Optional files: 01-go.mp3 through 30-think.mp3.
+Place them in assets/world2/high-frequency-verbs/audio/.
+If an MP3 is absent or fails, British SpeechSynthesis is used automatically.
