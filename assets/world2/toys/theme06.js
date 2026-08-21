@@ -8,7 +8,7 @@
     world2Url: '../../world2.html',
     themeIndex: 5,
     previousThemeIndex: 4,
-    build: 'theme06-final-v1.0.0'
+    build: 'theme06-patch-v1.1.0'
   }, window.LEXICONIA_THEME06_CONFIG || {});
 
   const qs = new URLSearchParams(location.search);
@@ -528,7 +528,69 @@
   }
 
   function startCurrentChase(game){
-    createSession(game,6);currentStandardNext=()=>{const qn=generateQuestion('mixed',Math.max(1,tier()));newRoundQuestion(qn);prepareGameArea({kicker:'🐠 CURRENT CHASE',prompt:qn.prompt,sub:'Intercept the correct target. Missing a target is a gameplay miss, not an English error.',html:'<div id="currentZone" class="current-zone"></div>'});const zone=$('currentZone');let resolved=false;shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className='chase-target';b.dataset.answer=o;b.textContent=o;b.style.setProperty('--y',(58+i*84)+'px');b.style.setProperty('--d',(6.8+i*.55)+'s');b.style.animationDelay=(i*.22)+'s';b.onclick=()=>{if(resolved)return;resolved=true;const ok=acceptedAnswer(o,qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);audio.sfx(ok?'correct':'wrong');setTimeout(next,550);};b.addEventListener('animationend',()=>{if(!resolved&&acceptedAnswer(o,qn.answer)){resolved=true;session.gameplayMisses++;toast('Target passed. Timing miss — no Mastery penalty.','bad');setTimeout(next,450);}});zone.appendChild(b);});function next(){session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();}updateStats();};currentStandardNext();
+    createSession(game,6);
+    currentStandardNext=()=>{
+      const qn=generateQuestion('mixed',Math.max(1,tier()));
+      newRoundQuestion(qn);
+      prepareGameArea({
+        kicker:'🐠 CURRENT CHASE',
+        prompt:qn.prompt,
+        sub:'Intercept the correct target. The fish move at a learner-friendly speed; a timing miss never reduces Mastery.',
+        html:'<div id="currentZone" class="current-zone"></div>'
+      });
+      const zone=$('currentZone');
+      let resolved=false;
+      const coarsePointer=window.matchMedia?.('(pointer: coarse)')?.matches;
+      const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+      const baseDuration=reducedMotion?18:(coarsePointer?15.5:12.5);
+
+      const resolveTarget=(button,answer)=>{
+        if(resolved)return;
+        resolved=true;
+        button.style.animationPlayState='paused';
+        const ok=acceptedAnswer(answer,qn.answer);
+        recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});
+        session.score+=ok?130*session.creditFactor:0;
+        if(!ok)session.academicMisses.push(qn.target);
+        button.classList.add(ok?'correct':'wrong');
+        audio.sfx(ok?'correct':'wrong');
+        setTimeout(next,650);
+      };
+
+      shuffle(qn.options).forEach((o,i)=>{
+        const b=document.createElement('button');
+        b.className='chase-target';
+        b.dataset.answer=o;
+        b.textContent=o;
+        b.style.setProperty('--y',(44+i*88)+'px');
+        b.style.setProperty('--d',(baseDuration+i*.85)+'s');
+        b.style.animationDelay=(i*.32)+'s';
+        b.setAttribute('aria-label',`Catch ${o}`);
+        // pointerdown reacts immediately on mouse and touch, before a fast-moving
+        // target can leave the pointer between press and click.
+        b.addEventListener('pointerdown',e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          resolveTarget(b,o);
+        });
+        b.addEventListener('animationend',()=>{
+          if(!resolved&&acceptedAnswer(o,qn.answer)){
+            resolved=true;
+            session.gameplayMisses++;
+            toast('Target passed. Timing miss — no Mastery penalty.','bad');
+            setTimeout(next,550);
+          }
+        });
+        zone.appendChild(b);
+      });
+      function next(){
+        session.round++;
+        if(session.round>=session.rounds)finishRegularGame();
+        else currentStandardNext();
+      }
+      updateStats();
+    };
+    currentStandardNext();
   }
 
   function startToyRush(game){
