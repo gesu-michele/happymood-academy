@@ -128,6 +128,41 @@
   const target = (word) => TARGET_BY_WORD[norm(word)] || TARGETS.find(t=>norm(t.word)===norm(word));
   const imagePath = (t, legacy=false) => CFG.assetRoot + (legacy ? t.legacyFile : t.file);
 
+
+  function imageMarkup(t, cls='lex-img'){
+    if(!t)return '';
+    return `<img class="${cls}" src="${escapeHtml(imagePath(t))}" data-legacy="${escapeHtml(imagePath(t,true))}" alt="${escapeHtml(t.word)}"><span class="picture-fallback hidden">${escapeHtml(t.word)}</span>`;
+  }
+  function wireImageFallback(root=$('challengeArea')){
+    if(!root)return;
+    root.querySelectorAll('img[data-legacy]').forEach(img=>{
+      img.onerror=()=>{
+        if(img.dataset.tried!=='1'){
+          img.dataset.tried='1';
+          img.src=img.dataset.legacy;
+        }else{
+          img.style.display='none';
+          const fb=img.nextElementSibling;
+          if(fb)fb.classList.remove('hidden');
+        }
+      };
+    });
+  }
+  function visualChoiceMarkup(answer, qn=currentQuestion, level=tier()){
+    const t=(qn?.context==='spelling' && qn?.target)?target(qn.target):target(answer);
+    if(!t)return `<span class="visual-choice text-only"><span class="visual-choice-label">${escapeHtml(answer)}</span></span>`;
+    const sizeClass=level===0?'visual-foundation':level===1?'visual-explorer':level===2?'visual-challenger':'visual-master';
+    return `<span class="visual-choice ${sizeClass}"><span class="visual-choice-media">${imageMarkup(t,'visual-choice-img')}</span><span class="visual-choice-label">${escapeHtml(answer)}</span></span>`;
+  }
+  function singleVisualSupport(word, extraClass=''){
+    const t=target(word);if(!t)return '';
+    return `<div class="single-visual-support ${extraClass}"><div class="single-visual-media">${imageMarkup(t,'single-visual-img')}</div></div>`;
+  }
+  function optionVisualStrip(qn, extraClass=''){
+    if(!qn?.options?.length)return '';
+    return `<div class="visual-option-strip ${extraClass}">${qn.options.map(o=>`<div class="visual-strip-item">${visualChoiceMarkup(o,qn,Math.min(tier(),2))}</div>`).join('')}</div>`;
+  }
+
   function getProfile(){
     try{const p=JSON.parse(localStorage.getItem(ACTIVE_KEY)||'null');if(p)return p;}catch(_){ }
     try{const list=JSON.parse(localStorage.getItem(PROFILE_KEY)||'[]');return [...list].sort((a,b)=>(b.lastPlayed||0)-(a.lastPlayed||0))[0]||null;}catch(_){return null;}
@@ -444,8 +479,18 @@
   }
   function renderMcq(qn,{speakNow=false,showHearts=false}={}){
     newRoundQuestion(qn);
-    prepareGameArea({prompt:qn.prompt,sub:qn.context==='spelling'?'Only one spelling is correct.':'Think before you choose.',kicker:qn.context?.toUpperCase()||'CHALLENGE',showHearts,html:`<div class="answer-grid">${qn.options.map(o=>`<button class="answer-btn" data-answer="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('')}</div>`});
-    $$('.answer-btn',$('challengeArea')).forEach(b=>b.onclick=()=>answerMcq(b.dataset.answer,b));if(speakNow)setTimeout(()=>speak(qn.speak||qn.prompt,.72),260);updateStats();
+    const supportNote=tier()===0?'Picture + word support':tier()===1?'Picture support remains available':tier()===2?'Use the image, clue and spelling together':'Master: read carefully; visual support remains available';
+    prepareGameArea({
+      prompt:qn.prompt,
+      sub:qn.context==='spelling'?`Only one spelling is correct. · ${supportNote}`:`Think before you choose. · ${supportNote}`,
+      kicker:qn.context?.toUpperCase()||'CHALLENGE',
+      showHearts,
+      html:`<div class="answer-grid visual-answer-grid">${qn.options.map(o=>`<button class="answer-btn visual-answer-btn" data-answer="${escapeHtml(o)}">${visualChoiceMarkup(o,qn,tier())}</button>`).join('')}</div>`
+    });
+    wireImageFallback($('challengeArea'));
+    $$('.answer-btn',$('challengeArea')).forEach(b=>b.onclick=()=>answerMcq(b.dataset.answer,b));
+    if(speakNow)setTimeout(()=>speak(qn.speak||qn.prompt,.72),260);
+    updateStats();
   }
   function answerMcq(value,button){
     if(feedbackLocked)return;feedbackLocked=true;const ok=norm(value)===norm(currentQuestion.answer);button.classList.add(ok?'correct':'wrong');if(ok)audio.sfx('correct');else audio.sfx('wrong');
@@ -482,10 +527,18 @@
     renderOrderBoard();
   }
   function renderOrderBoard(){
-    prepareGameArea({kicker:'SEQUENCE',prompt:currentQuestion.prompt,sub:'Select each tile in order. A wrong choice resets the current sequence.',html:`<div class="order-line" id="orderLine"></div><div class="order-pool" id="orderPool"></div>`});
-    shuffle(session.orderList.filter(x=>!session.selected.includes(x))).forEach(w=>{const b=document.createElement('button');b.className='order-tile';b.textContent=w;b.onclick=()=>selectOrderWord(w);$('orderPool').appendChild(b);});renderOrderSelected();
+    prepareGameArea({kicker:'SEQUENCE',prompt:currentQuestion.prompt,sub:'Select each visual tile in order. A wrong choice resets the current sequence.',html:`<div class="order-line visual-order-line" id="orderLine"></div><div class="order-pool visual-order-pool" id="orderPool"></div>`});
+    shuffle(session.orderList.filter(x=>!session.selected.includes(x))).forEach(w=>{
+      const b=document.createElement('button');b.className='order-tile visual-order-tile';b.dataset.answer=w;
+      b.innerHTML=visualChoiceMarkup(w,{target:w,context:'sequence'},Math.min(tier(),2));
+      b.onclick=()=>selectOrderWord(w);$('orderPool').appendChild(b);
+    });
+    wireImageFallback($('challengeArea'));renderOrderSelected();
   }
-  function renderOrderSelected(){$('orderLine').innerHTML=session.selected.map(w=>`<span class="order-tile">${w}</span>`).join('');}
+  function renderOrderSelected(){
+    $('orderLine').innerHTML=session.selected.map(w=>`<span class="order-tile visual-order-tile selected-order">${visualChoiceMarkup(w,{target:w,context:'sequence'},0)}</span>`).join('');
+    wireImageFallback($('orderLine'));
+  }
   function selectOrderWord(word){
     const expected=session.orderList[session.selected.length];if(word===expected){session.selected.push(word);recordAcademic(word,true,{context:'sequence'});audio.sfx('correct');if(session.selected.length===session.orderList.length){session.round=1;session.score=100;setTimeout(()=>finishRegularGame(),450);}else renderOrderBoard();}
     else{recordAcademic(expected,false,{context:'sequence'});session.academicMisses.push(expected);audio.sfx('wrong');toast(`Sequence reset. Expected ${expected}.`,'bad');session.selected=[];renderOrderBoard();}
@@ -494,12 +547,28 @@
   function maskWord(word){
     const chars=[...word];const eligible=chars.map((c,i)=>/[a-z]/i.test(c)&&i>0&&i<chars.length-1?i:null).filter(i=>i!==null);const removeCount=clamp(Math.floor(chars.length/3)+(tier()>1?1:0),2,Math.min(5,eligible.length));shuffle(eligible).slice(0,removeCount).forEach(i=>chars[i]='_');return chars.join(' ');
   }
-  function startMissingLetters(game){createSession(game,7);currentStandardNext=()=>{const pool=TARGETS.filter(t=>t.word.length>=5),t=pool[Math.floor(Math.random()*pool.length)];newRoundQuestion(q(`Complete the word:`,t.word,[],t.word,'Use the visible letters and the meaning from Pre-Teach.',`The word begins with ${t.word.slice(0,2)} and ends with ${t.word.slice(-2)}.`,'spelling'));prepareGameArea({kicker:'MISSING LETTERS',prompt:'Recover the complete spelling.',sub:t.es,html:`<div class="masked-word">${maskWord(t.word.toUpperCase())}</div><input id="typedAnswer" class="input-answer" autocomplete="off" spellcheck="false" placeholder="Type the complete word"><div style="text-align:center;margin-top:14px"><button id="submitTyped" class="btn gold">CHECK ANSWER</button></div>`});$('submitTyped').onclick=checkTyped;$('typedAnswer').addEventListener('keydown',e=>{if(e.key==='Enter')checkTyped();});$('typedAnswer').focus();};currentStandardNext();}
+  function startMissingLetters(game){
+    createSession(game,7);
+    currentStandardNext=()=>{
+      const pool=TARGETS.filter(t=>t.word.length>=5),t=pool[Math.floor(Math.random()*pool.length)];
+      newRoundQuestion(q(`Complete the word:`,t.word,[],t.word,'Use the visible letters and the picture from Pre-Teach.',`The word begins with ${t.word.slice(0,2)} and ends with ${t.word.slice(-2)}.`,'spelling'));
+      prepareGameArea({kicker:'MISSING LETTERS',prompt:'Recover the complete spelling.',sub:`${t.es} · Visual support stays available.`,html:`${singleVisualSupport(t.word,'spelling-support')}<div class="masked-word">${maskWord(t.word.toUpperCase())}</div><input id="typedAnswer" class="input-answer" autocomplete="off" spellcheck="false" placeholder="Type the complete word"><div style="text-align:center;margin-top:14px"><button id="submitTyped" class="btn gold">CHECK ANSWER</button></div>`});
+      wireImageFallback($('challengeArea'));
+      $('submitTyped').onclick=checkTyped;$('typedAnswer').addEventListener('keydown',e=>{if(e.key==='Enter')checkTyped();});$('typedAnswer').focus();
+    };
+    currentStandardNext();
+  }
   function checkTyped(){if(feedbackLocked)return;const input=$('typedAnswer'),value=input.value,ok=norm(value)===norm(currentQuestion.answer);feedbackLocked=true;input.classList.add(ok?'correct':'wrong');recordAcademic(currentQuestion.target,ok,{credit:session.creditFactor,context:'spelling',assisted:session.assistedThisRound});session.score+=ok?100*session.creditFactor:0;if(!ok)session.academicMisses.push(currentQuestion.target);$('promptSub').textContent=ok?'✅ Excellent spelling!':`❌ Correct spelling: ${currentQuestion.answer}`;audio.sfx(ok?'correct':'wrong');setTimeout(()=>{session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();},800);}
 
   function startBuildWord(game){createSession(game,7);currentStandardNext=()=>{const pool=TARGETS.filter(t=>t.word.length>=6),t=pool[Math.floor(Math.random()*pool.length)];session.buildTarget=t;session.built=[];newRoundQuestion(q(`Build the word meaning “${t.es}”.`,t.word,[],t.word,'Use every letter exactly once.',`The spelling rhythm is ${t.syllables}.`,'spelling'));renderBuildBoard();};currentStandardNext();}
-  function renderBuildBoard(){const t=session.buildTarget,remaining=[...t.word.toUpperCase()];session.built.forEach(letter=>{const i=remaining.indexOf(letter);if(i>=0)remaining.splice(i,1);});prepareGameArea({kicker:'BUILD THE WORD',prompt:currentQuestion.prompt,sub:`${t.ipa} · ${t.syllables}`,html:`<div id="builtWord" class="built-word">${session.built.map(l=>`<span class="built-letter">${l}</span>`).join('')}</div><div id="letterBoard" class="letter-board"></div><div style="text-align:center"><button id="backLetter" class="btn ghost small">⌫ BACK</button> <button id="resetLetters" class="btn ghost small">RESET</button></div>`});shuffle(remaining).forEach(l=>{const b=document.createElement('button');b.className='letter-btn';b.textContent=l;b.onclick=()=>{session.built.push(l);if(session.built.length===t.word.length){const made=session.built.join(''),ok=norm(made)===norm(t.word);recordAcademic(t.word,ok,{context:'spelling'});session.score+=ok?100:0;if(!ok)session.academicMisses.push(t.word);audio.sfx(ok?'correct':'wrong');$('promptSub').textContent=ok?'✅ Word constructed correctly!':`❌ You built ${made}. Try the correct order next.`;setTimeout(()=>{session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();},750);}else renderBuildBoard();};$('letterBoard').appendChild(b);});$('backLetter').onclick=()=>{session.built.pop();renderBuildBoard();};$('resetLetters').onclick=()=>{session.built=[];renderBuildBoard();};}
-
+  function renderBuildBoard(){
+    const t=session.buildTarget,remaining=[...t.word.toUpperCase()];
+    session.built.forEach(letter=>{const i=remaining.indexOf(letter);if(i>=0)remaining.splice(i,1);});
+    prepareGameArea({kicker:'BUILD THE WORD',prompt:currentQuestion.prompt,sub:`${t.ipa} · ${t.syllables} · Picture support remains visible.`,html:`${singleVisualSupport(t.word,'spelling-support')}<div id="builtWord" class="built-word">${session.built.map(l=>`<span class="built-letter">${l}</span>`).join('')}</div><div id="letterBoard" class="letter-board"></div><div style="text-align:center"><button id="backLetter" class="btn ghost small">⌫ BACK</button> <button id="resetLetters" class="btn ghost small">RESET</button></div>`});
+    wireImageFallback($('challengeArea'));
+    shuffle(remaining).forEach(l=>{const b=document.createElement('button');b.className='letter-btn';b.textContent=l;b.onclick=()=>{session.built.push(l);if(session.built.length===t.word.length){const made=session.built.join(''),ok=norm(made)===norm(t.word);recordAcademic(t.word,ok,{context:'spelling'});session.score+=ok?100:0;if(!ok)session.academicMisses.push(t.word);audio.sfx(ok?'correct':'wrong');$('promptSub').textContent=ok?'✅ Word constructed correctly!':`❌ You built ${made}. Try the correct order next.`;setTimeout(()=>{session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();},750);}else renderBuildBoard();};$('letterBoard').appendChild(b);});
+    $('backLetter').onclick=()=>{session.built.pop();renderBuildBoard();};$('resetLetters').onclick=()=>{session.built=[];renderBuildBoard();};
+  }
   function startRiddles(game){
     createSession(game,8);const riddles=[
       q('I am the first month, but I am not the first day. Who am I?','January',spellingOptions('January'),'January','Think about the beginning of a year.','The year begins with this month.','reasoning'),
@@ -523,19 +592,58 @@
   function startCalendarLogic(game){createSession(game,9);currentStandardNext=()=>{const type=session.round%3===0?'extended':session.round%3===1?'month':'day';renderMcq(generateQuestion(type,Math.max(2,tier())));};currentStandardNext();}
 
   function startBubbleRescue(game){
-    createSession(game,6);currentStandardNext=()=>{const qn=generateQuestion(session.round%2?'spelling':'mixed',Math.max(1,tier()));newRoundQuestion(qn);prepareGameArea({kicker:'🫧 BUBBLE RESCUE',prompt:qn.prompt,sub:'Pop the correct bubble before it reaches the surface.',html:'<div id="bubbleZone" class="bubble-zone"></div>'});
-      const zone=$('bubbleZone'),options=shuffle(qn.options);let resolved=false;options.forEach((o,i)=>{const b=document.createElement('button');b.className='bubble';b.dataset.answer=o;b.textContent=o;b.style.setProperty('--s',(105+Math.random()*30)+'px');b.style.setProperty('--x',(4+i*(88/Math.max(1,options.length-1)))+'%');b.style.setProperty('--d',(6.4+Math.random()*2.4)+'s');b.style.setProperty('--drift',(-25+Math.random()*50)+'px');b.style.animationDelay=(i*.24)+'s';b.onclick=()=>{if(resolved)return;resolved=true;const ok=norm(o)===norm(qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?120*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);b.classList.add(ok?'correct':'wrong');audio.sfx(ok?'correct':'wrong');setTimeout(next,550);};b.addEventListener('animationend',()=>{if(!resolved&&norm(o)===norm(qn.answer)){resolved=true;session.gameplayMisses++;toast('The correct bubble escaped. Timing miss — Mastery unchanged.','bad');setTimeout(next,450);}});zone.appendChild(b);});function next(){session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();}updateStats();};currentStandardNext();
+    createSession(game,6);
+    currentStandardNext=()=>{
+      const level=tier(),qn=generateQuestion(session.round%2?'spelling':'mixed',Math.max(1,level));
+      newRoundQuestion(qn);
+      prepareGameArea({kicker:'🫧 BUBBLE RESCUE',prompt:qn.prompt,sub:'Pop the correct picture + word before it reaches the surface.',html:'<div id="bubbleZone" class="bubble-zone visual-bubble-zone"></div>'});
+      const zone=$('bubbleZone'),options=shuffle(qn.options);let resolved=false;
+      const coarse=window.matchMedia?.('(pointer: coarse)')?.matches;
+      const durations=[14.5,13,11.5,10],base=durations[level]+(coarse?1.8:0);
+      const choose=(b,o,e)=>{if(e){e.preventDefault();e.stopPropagation();}if(resolved)return;resolved=true;$$('.bubble',zone).forEach(x=>{x.style.animationPlayState='paused';x.disabled=true;});const ok=norm(o)===norm(qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?120*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);b.classList.add(ok?'correct':'wrong');audio.sfx(ok?'correct':'wrong');setTimeout(next,700);};
+      options.forEach((o,i)=>{
+        const b=document.createElement('button');b.className=`bubble visual-bubble tier-${level}`;b.dataset.answer=o;b.innerHTML=visualChoiceMarkup(o,qn,Math.min(level,2));
+        b.style.setProperty('--x',(4+i*(66/Math.max(1,options.length-1)))+'%');b.style.setProperty('--d',(base+Math.random()*1.2)+'s');b.style.setProperty('--drift',(-18+Math.random()*36)+'px');b.style.animationDelay=(i*.38)+'s';
+        b.addEventListener('pointerdown',e=>choose(b,o,e));b.addEventListener('click',e=>choose(b,o,e));
+        b.addEventListener('animationend',()=>{if(!resolved&&norm(o)===norm(qn.answer)){resolved=true;session.gameplayMisses++;toast('The correct bubble escaped. Timing miss — Mastery unchanged.','bad');setTimeout(next,650);}});zone.appendChild(b);
+      });
+      wireImageFallback(zone);
+      function next(){session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();}
+      updateStats();
+    };
+    currentStandardNext();
   }
-
   function startSonar(game){
-    createSession(game,6);currentStandardNext=()=>{const qn=generateQuestion(session.round%2?'mixed':'spelling',Math.max(1,tier()));newRoundQuestion(qn);prepareGameArea({kicker:'🚢 SUBMARINE SONAR',prompt:qn.prompt,sub:'Wait for the sweep, then confirm the correct signal.',html:'<div id="sonarZone" class="sonar-zone"></div>'});
-      const positions=[[26,27],[70,25],[31,67],[72,69]];shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className='blip';b.dataset.answer=o;b.textContent=o;b.style.setProperty('--x',positions[i][0]+'%');b.style.setProperty('--y',positions[i][1]+'%');b.onclick=()=>{if(feedbackLocked)return;feedbackLocked=true;const ok=norm(o)===norm(qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);b.classList.add(ok?'correct':'wrong');audio.sfx(ok?'correct':'wrong');setTimeout(()=>{session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();},650);};$('sonarZone').appendChild(b);});updateStats();};currentStandardNext();
+    createSession(game,6);
+    currentStandardNext=()=>{
+      const level=tier(),qn=generateQuestion(session.round%2?'mixed':'spelling',Math.max(1,level));newRoundQuestion(qn);
+      prepareGameArea({kicker:'🚢 SUBMARINE SONAR',prompt:qn.prompt,sub:'Use the picture + word signal, then confirm the correct target.',html:'<div id="sonarZone" class="sonar-zone visual-sonar-zone"></div>'});
+      const positions=[[25,25],[72,24],[27,69],[72,69]];
+      shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className=`blip visual-blip tier-${level}`;b.dataset.answer=o;b.innerHTML=visualChoiceMarkup(o,qn,Math.min(level,2));b.style.setProperty('--x',positions[i][0]+'%');b.style.setProperty('--y',positions[i][1]+'%');const choose=(e)=>{if(e){e.preventDefault();e.stopPropagation();}if(feedbackLocked)return;feedbackLocked=true;const ok=norm(o)===norm(qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);b.classList.add(ok?'correct':'wrong');audio.sfx(ok?'correct':'wrong');setTimeout(()=>{session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();},700);};b.addEventListener('pointerdown',choose);b.addEventListener('click',choose);$('sonarZone').appendChild(b);});
+      wireImageFallback($('sonarZone'));updateStats();
+    };
+    currentStandardNext();
   }
-
   function startCurrentChase(game){
-    createSession(game,6);currentStandardNext=()=>{const qn=generateQuestion('mixed',Math.max(1,tier()));newRoundQuestion(qn);prepareGameArea({kicker:'🐠 CURRENT CHASE',prompt:qn.prompt,sub:'Intercept the correct target. Missing a target is a gameplay miss, not an English error.',html:'<div id="currentZone" class="current-zone"></div>'});const zone=$('currentZone');let resolved=false;shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className='chase-target';b.dataset.answer=o;b.textContent=o;b.style.setProperty('--y',(58+i*84)+'px');b.style.setProperty('--d',(6.8+i*.55)+'s');b.style.animationDelay=(i*.22)+'s';b.onclick=()=>{if(resolved)return;resolved=true;const ok=norm(o)===norm(qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);audio.sfx(ok?'correct':'wrong');setTimeout(next,550);};b.addEventListener('animationend',()=>{if(!resolved&&norm(o)===norm(qn.answer)){resolved=true;session.gameplayMisses++;toast('Target passed. Timing miss — no Mastery penalty.','bad');setTimeout(next,450);}});zone.appendChild(b);});function next(){session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();}updateStats();};currentStandardNext();
+    createSession(game,6);
+    currentStandardNext=()=>{
+      const level=tier(),qn=generateQuestion('mixed',Math.max(1,level));newRoundQuestion(qn);
+      const support=level===0?'Catch the large picture + word.':level===1?'Use picture + word support.':level===2?'Use the clue, image and word together.':'Master mode: harder clue, but visual support remains.';
+      prepareGameArea({kicker:'🐠 CURRENT CHASE',prompt:qn.prompt,sub:`${support} Missing a target is a gameplay miss, not an English error.`,html:'<div id="currentZone" class="current-zone visual-current-zone"><div id="chaseCountdown" class="chase-countdown" aria-live="polite">3</div></div>'});
+      const zone=$('currentZone'),countdown=$('chaseCountdown');let resolved=false,countdownDone=false;
+      const coarse=window.matchMedia?.('(pointer: coarse)')?.matches;const durations=[26,22,18,15],base=durations[level]+(coarse?2.5:0);const stagger=[1.2,1.05,.9,.75][level];const movers=[];
+      const stopAll=()=>movers.forEach(el=>{el.style.animationPlayState='paused';el.disabled=true;});
+      const choose=(b,o,e)=>{if(e){e.preventDefault();e.stopPropagation();}if(resolved||!countdownDone)return;resolved=true;stopAll();const ok=norm(o)===norm(qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);b.classList.add(ok?'correct':'wrong');audio.sfx(ok?'correct':'wrong');setTimeout(next,850);};
+      shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className=`chase-target visual-chase-target tier-${level}`;b.dataset.answer=o;b.innerHTML=visualChoiceMarkup(o,qn,Math.min(level,2));b.style.setProperty('--y',(20+i*105)+'px');b.style.setProperty('--d',(base+i*.7)+'s');b.style.animationDelay=(i*stagger)+'s';b.style.animationPlayState='paused';b.setAttribute('aria-label',`Catch ${o}`);b.addEventListener('pointerdown',e=>choose(b,o,e));b.addEventListener('click',e=>choose(b,o,e));b.addEventListener('animationend',()=>{if(!resolved&&countdownDone&&norm(o)===norm(qn.answer)){resolved=true;stopAll();session.gameplayMisses++;toast('Target passed. Timing miss — no Mastery penalty.','bad');setTimeout(next,650);}});zone.appendChild(b);movers.push(b);});
+      wireImageFallback(zone);
+      requestAnimationFrame(()=>{const travel=Math.max(600,zone.clientWidth+620);movers.forEach(b=>b.style.setProperty('--travel',`${travel}px`));});
+      let count=3;const cd=setInterval(()=>{count--;if(count>0){countdown.textContent=count;}else if(count===0){countdown.textContent='GO!';countdown.classList.add('go');countdownDone=true;movers.forEach(b=>b.style.animationPlayState='running');}else{clearInterval(cd);countdown.remove();}},650);
+      actionCleanup=()=>clearInterval(cd);
+      function next(){clearInterval(cd);session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();}
+      updateStats();
+    };
+    currentStandardNext();
   }
-
   function startCalendarRush(game){
     createSession(game,10);session.remaining=60;$('timerWrap').classList.remove('hidden');$('timerStat').textContent=session.remaining;currentStandardNext=()=>renderMcq(generateQuestion('mixed',Math.max(1,tier())));currentStandardNext();timerHandle=setInterval(()=>{session.remaining--;$('timerStat').textContent=session.remaining;if(session.remaining<=0){clearInterval(timerHandle);timerHandle=null;session.round=session.rounds;finishRegularGame({customTitle:'⏱️ TIME IS UP'});}},1000);actionCleanup=()=>{$('timerWrap').classList.add('hidden');};
   }
@@ -548,7 +656,9 @@
   function buyMinerItem(id){const costs={dynamite:35,time:45,power:50};if(!spend('gold',costs[id])){toast('NOT ENOUGH COINS','bad');return;}if(id==='dynamite')session.minerItems.dynamite++;if(id==='time'){session.minerItems.extraTime+=15;session.remaining+=15;}if(id==='power')session.minerItems.power+=.35;audio.sfx('correct');updateMinerInventoryText();}
   function updateMinerInventoryText(){const el=$('shopInventory');if(el)el.textContent=`Inventory: 🧨 ${session.minerItems.dynamite} · ⏱️ +${session.minerItems.extraTime}s · 💪 x${session.minerItems.power.toFixed(2)}`;}
   function beginGoldMiner(){
-    const qn=generateQuestion('mixed',Math.max(2,tier()));newRoundQuestion(qn);prepareGameArea({kicker:'⛏️ CALENDAR MINE',prompt:qn.prompt,sub:'The claw swings automatically. Click, tap or press Space at the right moment.',showHearts:true,html:`<div class="canvas-frame"><canvas id="minerCanvas" width="1000" height="560" aria-label="Calendar Mine"></canvas></div><div class="miner-controls"><button id="launchClaw" class="btn gold">⛓️ RELEASE CLAW</button><button id="useDynamite" class="btn red">🧨 DYNAMITE (<span id="dynCount">${session.minerItems.dynamite}</span>)</button><button id="buyDynamite" class="btn small">BUY 🧨 · 🪙35</button></div>`});
+    const qn=generateQuestion('mixed',Math.max(2,tier()));newRoundQuestion(qn);
+    prepareGameArea({kicker:'⛏️ CALENDAR MINE',prompt:qn.prompt,sub:'Use the visual target guide, then release the automatic claw at the right moment.',showHearts:true,html:`<div id="minerVisualStrip" class="miner-visual-strip">${optionVisualStrip(qn,'miner-strip')}</div><div class="canvas-frame"><canvas id="minerCanvas" width="1000" height="560" aria-label="Calendar Mine"></canvas></div><div class="miner-controls"><button id="launchClaw" class="btn gold">⛓️ RELEASE CLAW</button><button id="useDynamite" class="btn red">🧨 DYNAMITE (<span id="dynCount">${session.minerItems.dynamite}</span>)</button><button id="buyDynamite" class="btn small">BUY 🧨 · 🪙35</button></div>`});
+    wireImageFallback($('minerVisualStrip'));
     initMinerCanvas(qn);$('launchClaw').onclick=minerLaunch;$('useDynamite').onclick=minerDynamite;$('buyDynamite').onclick=()=>{if(spend('gold',35)){session.minerItems.dynamite++;$('dynCount').textContent=session.minerItems.dynamite;toast('🧨 Dynamite added.','good');}else toast('NOT ENOUGH COINS','bad');};
   }
   let miner=null;
@@ -581,7 +691,9 @@
     $('promptSub').textContent=ok?`✅ ${obj.label} is correct.`:`❌ ${obj.label} is not correct. The answer was ${miner.question.answer}.`;
     session.round++;if(session.hearts<=0||session.round>=session.rounds){setTimeout(()=>endMinerRun(session.hearts<=0?'No hearts remaining.':'Mining mission complete.'),650);}else setTimeout(nextMinerRound,650);
   }
-  function nextMinerRound(){if(!miner)return;const qn=generateQuestion('mixed',Math.max(2,tier()));newRoundQuestion(qn);miner.question=qn;miner.objects=[];buildMinerObjects(qn);$('promptText').textContent=qn.prompt;$('promptSub').textContent='The claw swings automatically. Choose the release moment.';miner.hook.state='swing';miner.hook.length=miner.hook.min;updateStats();}
+  function nextMinerRound(){
+    if(!miner)return;const qn=generateQuestion('mixed',Math.max(2,tier()));newRoundQuestion(qn);miner.question=qn;miner.objects=[];buildMinerObjects(qn);$('promptText').textContent=qn.prompt;$('promptSub').textContent='Use the visual guide, then time the automatic claw.';const strip=$('minerVisualStrip');if(strip){strip.innerHTML=optionVisualStrip(qn,'miner-strip');wireImageFallback(strip);}miner.hook.state='swing';miner.hook.length=miner.hook.min;updateStats();
+  }
   function endMinerRun(message){if(!miner)return;toast(message);if(timerHandle){clearInterval(timerHandle);timerHandle=null;}if(animationHandle){cancelAnimationFrame(animationHandle);animationHandle=null;}document.removeEventListener('keydown',minerKey);miner=null;$('timerWrap').classList.add('hidden');finishRegularGame({forceSuccess:session.correct>=4,customTitle:'⛏️ CALENDAR MINE RESULTS'});}
   function minerExplode(x,y){if(!miner)return;for(let i=0;i<50;i++){const a=Math.random()*Math.PI*2,s=50+Math.random()*180;miner.particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-50,life:.5+Math.random()*.5,color:['#ffd54d','#ff743e','#5a4032'][i%3]});}}
   function drawMiner(){
@@ -605,7 +717,8 @@
   function renderKrakenRound(){
     if(animationHandle){cancelAnimationFrame(animationHandle);animationHandle=null;}
     const qn=session.round%3===0?generateQuestion('spelling',3):session.round%3===1?generateQuestion('knowledge',3):generateQuestion('mixed',3);newRoundQuestion(qn);
-    prepareGameArea({kicker:'🐙 KRAKEN BATTLE',prompt:qn.prompt,sub:'Correct answers damage the Kraken. Academic errors cost a heart.',showHearts:true,html:`<div class="boss-label"><span>BOSS · CALENDAR KRAKEN</span><span>PHASE ${session.krakenHp>5?1:session.krakenHp>2?2:3}</span></div><div class="boss-hp"><i id="krakenHpFill" style="width:${session.krakenHp/8*100}%"></i></div><div class="canvas-frame"><canvas id="krakenCanvas" width="1000" height="560"></canvas><div id="krakenOptions" class="kraken-options">${qn.options.map(o=>`<button class="answer-btn" data-answer="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('')}</div></div>`});
+    prepareGameArea({kicker:'🐙 KRAKEN BATTLE',prompt:qn.prompt,sub:'Use the visual option cards. Correct answers damage the Kraken; academic errors cost a heart.',showHearts:true,html:`<div class="boss-label"><span>BOSS · CALENDAR KRAKEN</span><span>PHASE ${session.krakenHp>5?1:session.krakenHp>2?2:3}</span></div><div class="boss-hp"><i id="krakenHpFill" style="width:${session.krakenHp/8*100}%"></i></div><div class="canvas-frame"><canvas id="krakenCanvas" width="1000" height="560"></canvas><div id="krakenOptions" class="kraken-options visual-kraken-options">${qn.options.map(o=>`<button class="answer-btn visual-answer-btn" data-answer="${escapeHtml(o)}">${visualChoiceMarkup(o,qn,Math.min(tier(),2))}</button>`).join('')}</div></div>`});
+    wireImageFallback($('krakenOptions'));
     $$('.answer-btn',$('krakenOptions')).forEach(b=>b.onclick=()=>answerKraken(b.dataset.answer,b));kraken={canvas:$('krakenCanvas'),ctx:$('krakenCanvas').getContext('2d'),last:performance.now(),hit:0,attack:0,phase:session.krakenHp>5?1:session.krakenHp>2?2:3};krakenLoop(performance.now());updateStats();
   }
   function answerKraken(value,button){
@@ -684,12 +797,14 @@
   function renderMasteryRound(){
     const qn=session.masterySet[session.round];newRoundQuestion(qn);
     if(qn.mode==='type'){
-      prepareGameArea({kicker:'👑 INDEPENDENT MASTERY',prompt:qn.prompt,sub:'No Gem Help. Exact spelling is required.',html:`<input id="masteryTyped" class="input-answer" autocomplete="off" spellcheck="false"><div style="text-align:center;margin-top:14px"><button id="masterySubmit" class="btn gold">SUBMIT</button></div>`});$('masterySubmit').onclick=answerMasteryTyped;$('masteryTyped').addEventListener('keydown',e=>{if(e.key==='Enter')answerMasteryTyped();});$('masteryTyped').focus();
+      prepareGameArea({kicker:'👑 INDEPENDENT MASTERY',prompt:qn.prompt,sub:'No Gem Help. Exact spelling is required; the visual reference remains available.',html:`${singleVisualSupport(qn.target,'mastery-visual')}<input id="masteryTyped" class="input-answer" autocomplete="off" spellcheck="false"><div style="text-align:center;margin-top:14px"><button id="masterySubmit" class="btn gold">SUBMIT</button></div>`});wireImageFallback($('challengeArea'));$('masterySubmit').onclick=answerMasteryTyped;$('masteryTyped').addEventListener('keydown',e=>{if(e.key==='Enter')answerMasteryTyped();});$('masteryTyped').focus();
     }else{
-      prepareGameArea({kicker:qn.mode==='listen'?'🔊 LISTENING MASTERY':'👑 MASTERY CHALLENGE',prompt:qn.mode==='listen'?'Listen to the clue and choose the answer.':qn.prompt,sub:'No Gem Help is available in the final challenge.',html:`${qn.mode==='listen'?'<div style="text-align:center;margin:8px"><button id="masteryReplay" class="btn small">🔊 REPLAY</button></div>':''}<div class="answer-grid">${qn.options.map(o=>`<button class="answer-btn" data-answer="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('')}</div>`});
+      prepareGameArea({kicker:qn.mode==='listen'?'🔊 LISTENING MASTERY':'👑 MASTERY CHALLENGE',prompt:qn.mode==='listen'?'Listen to the clue and choose the answer.':qn.prompt,sub:'No Gem Help is available. Visual support remains part of the learning design.',html:`${qn.mode==='listen'?'<div style="text-align:center;margin:8px"><button id="masteryReplay" class="btn small">🔊 REPLAY</button></div>':''}<div class="answer-grid visual-answer-grid">${qn.options.map(o=>`<button class="answer-btn visual-answer-btn" data-answer="${escapeHtml(o)}">${visualChoiceMarkup(o,qn,Math.min(tier(),2))}</button>`).join('')}</div>`});
+      wireImageFallback($('challengeArea'));
       if(qn.mode==='listen'){setTimeout(()=>speak(qn.speak||qn.prompt,.7),220);$('masteryReplay').onclick=()=>speak(qn.speak||qn.prompt,.7);}
       $$('.answer-btn',$('challengeArea')).forEach(b=>b.onclick=()=>answerMasteryChoice(b.dataset.answer,b));
-    }updateStats();
+    }
+    updateStats();
   }
   function answerMasteryChoice(value,button){if(feedbackLocked)return;feedbackLocked=true;const ok=norm(value)===norm(currentQuestion.answer);button.classList.add(ok?'correct':'wrong');recordAcademic(currentQuestion.target,ok,{context:`mastery-${currentQuestion.context}`});if(!ok)session.academicMisses.push(currentQuestion.target);audio.sfx(ok?'correct':'wrong');$$('.answer-btn',$('challengeArea')).forEach(b=>{b.disabled=true;if(norm(b.dataset.answer)===norm(currentQuestion.answer))b.classList.add('correct');});setTimeout(advanceMastery,700);}
   function answerMasteryTyped(){if(feedbackLocked)return;feedbackLocked=true;const value=$('masteryTyped').value,ok=norm(value)===norm(currentQuestion.answer);recordAcademic(currentQuestion.target,ok,{context:'mastery-spelling'});if(!ok)session.academicMisses.push(currentQuestion.target);$('promptSub').textContent=ok?'✅ Exact spelling confirmed.':`❌ Correct spelling: ${currentQuestion.answer}`;audio.sfx(ok?'correct':'wrong');setTimeout(advanceMastery,750);}
