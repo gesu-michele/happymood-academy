@@ -7,7 +7,7 @@
     world2Url: '../../world2.html',
     themeIndex: 7,
     previousThemeIndex: 6,
-    build: 'theme08-final-v1.0.0'
+    build: 'theme08-patch-v1.2.0'
   }, window.LEXICONIA_THEME08_CONFIG || {});
   const qs = new URLSearchParams(location.search);
   const PREVIEW = Boolean(CFG.forceTeacher || qs.get('preview') === 'teacher' || qs.get('teacherPreview') === '1');
@@ -109,7 +109,56 @@
   const escapeHtml = (s) => String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const serialise = (v) => JSON.parse(JSON.stringify(v));
   const target = (word) => TARGET_BY_WORD[norm(word)] || TARGETS.find(t=>norm(t.word)===norm(word));
-  const imagePath = (t, legacy=false) => CFG.assetRoot + (legacy ? t.legacyFile : t.file);
+  const uniqueStrings = (arr) => [...new Set(arr.filter(Boolean))];
+  function imageRoots(){
+    const roots=[CFG.assetRoot];
+    if(!PREVIEW){
+      // Production canonical path plus two legacy folder-name fallbacks.
+      roots.push('../../assets/world2/everyday-verbs/words/');
+      roots.push('../../assets/world2/everyday-verbs 01/words/');
+      roots.push('../../assets/world2/everyday-verbs-01/words/');
+    }
+    return uniqueStrings(roots.map(root=>{
+      try{return new URL(root,document.baseURI).href;}catch(_){return root;}
+    }));
+  }
+  function imageFileVariants(t){
+    const primary=t.file||'',legacy=t.legacyFile||'';
+    const stem=primary.replace(/\.(png|jpe?g|webp)$/i,'');
+    const legacyStem=legacy.replace(/\.(png|jpe?g|webp)$/i,'');
+    return uniqueStrings([
+      primary,legacy,
+      stem&&stem+'.PNG',stem&&stem+'.webp',stem&&stem+'.jpg',stem&&stem+'.jpeg',
+      legacyStem&&legacyStem+'.PNG',legacyStem&&legacyStem+'.webp',legacyStem&&legacyStem+'.jpg',legacyStem&&legacyStem+'.jpeg'
+    ]);
+  }
+  function imageCandidates(t){
+    if(!t)return [];
+    const urls=[];
+    imageRoots().forEach(root=>imageFileVariants(t).forEach(file=>{
+      try{urls.push(new URL(file,root).href);}catch(_){urls.push(root+file);}
+    }));
+    return uniqueStrings(urls);
+  }
+  const imagePath = (t, legacy=false) => {
+    const root=imageRoots()[0]||CFG.assetRoot;
+    const file=legacy?t.legacyFile:t.file;
+    try{return new URL(file,root).href;}catch(_){return root+file;}
+  };
+  function bindResilientImage(img,t,{onLoad,onFail}={}){
+    if(!img||!t)return;
+    const candidates=imageCandidates(t);let index=0,done=false;
+    img.style.display='block';img.alt=t.word||'';
+    const fail=()=>{
+      if(done)return;
+      if(index>=candidates.length){done=true;img.onerror=null;img.onload=null;img.style.display='none';onFail?.();return;}
+      const next=candidates[index++];
+      img.src=next+(next.includes('?')?'&':'?')+'leximg=1.2.0';
+    };
+    img.onload=()=>{if(done)return;done=true;img.onerror=null;onLoad?.();};
+    img.onerror=fail;
+    fail();
+  }
   let targetAudioRequest=0;
   function cancelTargetAudio(){
     targetAudioRequest++;
@@ -316,14 +365,16 @@
     $$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===preteachMode));
     const visual=$('preteachVisual'),wordPanel=$('preteachWordPanel');visual.classList.remove('loaded','missing');
     if(preteachMode==='language'){
-      const t=TARGETS[clamp(preteachIndex,0,TARGETS.length-1)],img=$('preteachImage');img.style.display='block';img.onload=()=>visual.classList.add('loaded');img.onerror=()=>{if(!img.dataset.legacy){img.dataset.legacy='1';img.src=imagePath(t,true);}else visual.classList.add('missing');};img.dataset.legacy='';img.src=imagePath(t);img.alt=t.word;$('fallbackWord').textContent=t.word;
+      const t=TARGETS[clamp(preteachIndex,0,TARGETS.length-1)],img=$('preteachImage');$('fallbackWord').textContent=t.word;
+      bindResilientImage(img,t,{onLoad:()=>visual.classList.add('loaded'),onFail:()=>visual.classList.add('missing')});
       wordPanel.innerHTML=`<span class="word-counter">${String(preteachIndex+1).padStart(2,'0')} / 30</span><div class="english-word">${t.word}</div><div class="spanish-word"><em>(${t.es})</em></div><div class="phonetic">🇬🇧 ${t.ipa}</div><div class="syllables">Spelling rhythm: ${t.syllables}</div><button id="speakWord" class="speak-btn" aria-label="Listen">🔊</button><p style="color:#cdebf5">British English is the pronunciation model. These targets share their spelling with American English.</p>`;
       $('speakWord').onclick=()=>playTargetAudio(t);if($('preteachReplay'))$('preteachReplay').onclick=()=>playTargetAudio(t);setTimeout(()=>playTargetAudio(t),180);
       $('preteachPrev').disabled=preteachIndex===0;$('preteachNext').textContent=preteachIndex===TARGETS.length-1?'FINISH NEW LANGUAGE ✓':'NEXT WORD ➜';
     }else if(preteachMode==='knowledge'){
       const f=KNOWLEDGE[clamp(preteachIndex,0,KNOWLEDGE.length-1)],kt=target(f.answer),img=$('preteachImage');
       if(kt){
-        img.style.display='block';img.dataset.legacy='';img.onload=()=>visual.classList.add('loaded');img.onerror=()=>{if(!img.dataset.legacy){img.dataset.legacy='1';img.src=imagePath(kt,true);}else visual.classList.add('missing');};img.src=imagePath(kt);img.alt=kt.word;$('fallbackWord').textContent=kt.word;
+        $('fallbackWord').textContent=kt.word;
+        bindResilientImage(img,kt,{onLoad:()=>visual.classList.add('loaded'),onFail:()=>visual.classList.add('missing')});
       }else{img.style.display='none';visual.classList.add('missing');$('fallbackWord').textContent=f.answer;}
       wordPanel.innerHTML=`<span class="word-counter">${String(preteachIndex+1).padStart(2,'0')} / ${KNOWLEDGE.length}</span><div class="english-word knowledge-title">KNOWLEDGE BOOST</div><div class="knowledge-fact-html">${escapeHtml(f.fact)}<small>${escapeHtml(f.es)}</small></div><button id="speakWord" class="speak-btn">🔊</button><div class="phonetic">Key target: ${escapeHtml(kt?.word||f.answer)}</div>`;$('speakWord').onclick=()=>speak(f.fact,.72);if($('preteachReplay'))$('preteachReplay').onclick=()=>speak(f.fact,.72);
       $('preteachPrev').disabled=preteachIndex===0;$('preteachNext').textContent=preteachIndex===KNOWLEDGE.length-1?'FINISH KNOWLEDGE BOOST ✓':'NEXT FACT ➜';
@@ -550,9 +601,16 @@
   }
 
   function imageMarkup(t,cls='picture-img'){
-    return `<img class="${cls}" src="${escapeHtml(imagePath(t))}" data-legacy="${escapeHtml(imagePath(t,true))}" alt="${escapeHtml(t.word)}"><div class="picture-fallback hidden">${escapeHtml(t.word)}</div>`;
+    return `<img class="${cls}" data-image-word="${escapeHtml(t.word)}" alt="${escapeHtml(t.word)}"><div class="picture-fallback hidden">${escapeHtml(t.word)}</div>`;
   }
-  function wireImageFallback(root=$('challengeArea')){if(!root)return;root.querySelectorAll('img[data-legacy]').forEach(img=>{img.onerror=()=>{if(img.dataset.tried!=='1'){img.dataset.tried='1';img.src=img.dataset.legacy;}else{img.style.display='none';img.nextElementSibling?.classList.remove('hidden');}};});}
+  function wireImageFallback(root=$('challengeArea')){
+    if(!root)return;
+    root.querySelectorAll('img[data-image-word]').forEach(img=>{
+      const t=target(img.dataset.imageWord),fallback=img.nextElementSibling;
+      if(!t){img.style.display='none';fallback?.classList.remove('hidden');return;}
+      bindResilientImage(img,t,{onLoad:()=>fallback?.classList.add('hidden'),onFail:()=>fallback?.classList.remove('hidden')});
+    });
+  }
   function visualChoiceMarkup(answer,qn=currentQuestion,level=tier()){
     const t=(qn?.context==='spelling'&&qn?.target)?target(qn.target):target(answer);
     if(!t)return `<span class="visual-choice text-only"><span class="visual-choice-label">${escapeHtml(answer)}</span></span>`;
