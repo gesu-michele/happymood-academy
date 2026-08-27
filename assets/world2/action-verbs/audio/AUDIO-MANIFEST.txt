@@ -1,0 +1,4 @@
+THEME 09 — OPTIONAL HUMAN AUDIO MANIFEST
+
+Optional future files: 01-climb.mp3 through 30-find.mp3.
+If an audio file is absent, the Theme uses British SpeechSynthesis automatically.
