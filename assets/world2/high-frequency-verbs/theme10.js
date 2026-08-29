@@ -7,7 +7,7 @@
     world2Url: '../../world2.html',
     themeIndex: 9,
     previousThemeIndex: 8,
-    build: 'theme10-final-v1.0.0'
+    build: 'theme10-reef-v1.1.1'
   }, window.LEXICONIA_THEME10_CONFIG || {});
   const qs = new URLSearchParams(location.search);
   const PREVIEW = Boolean(CFG.forceTeacher || qs.get('preview') === 'teacher' || qs.get('teacherPreview') === '1');
@@ -143,7 +143,7 @@
 
   const SPELLING_WRONG = {"go": ["Goe", "Goo", "Goh"], "come": ["Com", "Cume", "Comme"], "start": ["Strat", "Startt", "Staart"], "stop": ["Stope", "Stopp", "Sotp"], "wait": ["Wate", "Waite", "Weit"], "follow": ["Folow", "Follwow", "Foloow"], "enter": ["Entar", "Entter", "Etner"], "leave": ["Leav", "Leve", "Leeve"], "arrive": ["Arive", "Arriv", "Arryve"], "return": ["Retun", "Retourn", "Retern"], "cross": ["Cros", "Crosss", "Crose"], "move": ["Moov", "Movee", "Muve"], "stay": ["Stai", "Stayy", "Stey"], "bring": ["Brin", "Bringg", "Bryng"], "send": ["Sen", "Sendd", "Sind"], "choose": ["Chose", "Chooze", "Choosee"], "show": ["Sho", "Showw", "Shou"], "use": ["Uze", "Usse", "Usee"], "help": ["Helpp", "Hepl", "Halp"], "work": ["Wrok", "Workk", "Wurk"], "learn": ["Lern", "Leern", "Learnn"], "study": ["Studi", "Studdy", "Stady"], "teach": ["Teech", "Teachh", "Teatch"], "ask": ["Asck", "Askk", "Aks"], "answer": ["Anser", "Answar", "Anwser"], "call": ["Cal", "Calll", "Cawl"], "smile": ["Smil", "Smyle", "Smilee"], "laugh": ["Laug", "Laff", "Laught"], "cry": ["Crie", "Cryy", "Cri"], "think": ["Tink", "Thinkk", "Thnik"]};
 
-  const GAME_DEFS = [["quick-recall", "⚡", "Quick Recall", "Rapid preparation focused on the 30 new High-Frequency Verbs.", ["NEW VERBS", "ADAPTIVE"]], ["picture-action", "🖼️", "Picture Action", "Identify each new base verb from a full uncropped image.", ["VISUAL", "NEW TARGETS"]], ["listen-choose", "🔊", "Listen & Choose", "Use British pronunciation and spoken verb clues.", ["LISTENING", "BRITISH"]], ["verb-meaning", "🧠", "Verb Meaning", "Connect each High-Frequency Verb with its exact meaning and function.", ["MEANING", "PRECISION"]], ["verb-detective", "🕵️", "Verb Detective", "Infer the base verb from indirect evidence and context.", ["INFERENCE", "REASONING"]], ["missing-letters", "🔤", "Missing Letters", "Recover multiple missing letters from new High-Frequency Verbs.", ["SPELLING", "TYPE"]], ["spelling-detector", "✅", "Spelling Detector", "Identify exact spelling among plausible errors.", ["SPELLING", "CHOICE"]], ["build-word", "🧩", "Build the Word", "Construct complete High-Frequency Verbs from shuffled letters.", ["SPELLING", "BUILD"]], ["verb-contrast", "↔️", "Verb Contrast", "Distinguish close, opposite and perspective-dependent verbs precisely.", ["CONTRAST", "LOGIC"]], ["context-clues", "🔎", "Context Clues", "Use controlled present contexts to deduce the missing base verb.", ["CONTEXT", "INFERENCE"]], ["odd-one-out", "🧠", "Odd One Out", "Classify meanings and find the verb that does not belong.", ["CLASSIFICATION", "ELIMINATION"]], ["memory-challenge", "🃏", "Memory Challenge", "Match 15 new verb images with 15 English base verbs.", ["30 CARDS", "MEMORY"]], ["bubble-rescue", "🫧", "Bubble Rescue", "Pop the correct High-Frequency Verb before it escapes.", ["ACTION", "SPELLING"]], ["submarine-sonar", "🚢", "Submarine Sonar", "Locate the correct verb signal underwater.", ["MEANING", "LISTENING"]], ["current-chase", "🐠", "Current Chase", "Intercept the correct moving verb target.", ["ACTION", "TIMING"]], ["verb-mine", "⛏️", "Verb Mine", "Classic auto-swinging claw, rocks, timing and dynamite.", ["GOLD MINER", "REASONING"]], ["verb-rush", "⏱️", "Verb Rush", "Solve increasingly difficult verb clues against the clock.", ["SPEED", "ADAPTIVE"]], ["kraken-battle", "🐙", "Kraken Battle", "Defeat the boss through meaning, spelling, contrast and context.", ["BOSS", "HEARTS"]], ["practice-mistakes", "🛠️", "Practice My Mistakes", "Target verbs flagged by the Academic Record.", ["NEEDS REVIEW", "PERSONALISED"]], ["mastery-challenge", "👑", "Mastery Challenge", "80% Theme 10 verbs, 20% cumulative retrieval, no Gem Help.", ["FINAL", "NO HELP"]]].map((g,i)=>({id:g[0],icon:g[1],title:g[2],desc:g[3],tags:g[4],index:i+1}));
+  const GAME_DEFS = [["quick-recall", "⚡", "Quick Recall", "Rapid preparation focused on the 30 new High-Frequency Verbs.", ["NEW VERBS", "ADAPTIVE"]], ["picture-action", "🖼️", "Picture Action", "Identify each new base verb from a full uncropped image.", ["VISUAL", "NEW TARGETS"]], ["listen-choose", "🔊", "Listen & Choose", "Use British pronunciation and spoken verb clues.", ["LISTENING", "BRITISH"]], ["verb-meaning", "🧠", "Verb Meaning", "Connect each High-Frequency Verb with its exact meaning and function.", ["MEANING", "PRECISION"]], ["verb-detective", "🕵️", "Verb Detective", "Infer the base verb from indirect evidence and context.", ["INFERENCE", "REASONING"]], ["missing-letters", "🔤", "Missing Letters", "Recover multiple missing letters from new High-Frequency Verbs.", ["SPELLING", "TYPE"]], ["spelling-detector", "✅", "Spelling Detector", "Identify exact spelling among plausible errors.", ["SPELLING", "CHOICE"]], ["build-word", "🧩", "Build the Word", "Construct complete High-Frequency Verbs from shuffled letters.", ["SPELLING", "BUILD"]], ["verb-contrast", "↔️", "Verb Contrast", "Distinguish close, opposite and perspective-dependent verbs precisely.", ["CONTRAST", "LOGIC"]], ["context-clues", "🔎", "Context Clues", "Use controlled present contexts to deduce the missing base verb.", ["CONTEXT", "INFERENCE"]], ["odd-one-out", "🧠", "Odd One Out", "Classify meanings and find the verb that does not belong.", ["CLASSIFICATION", "ELIMINATION"]], ["memory-challenge", "🃏", "Memory Challenge", "Match 15 new verb images with 15 English base verbs.", ["30 CARDS", "MEMORY"]], ["bubble-rescue", "🫧", "Bubble Rescue", "Pop the correct High-Frequency Verb before it escapes.", ["ACTION", "SPELLING"]], ["submarine-sonar", "🚢", "Submarine Sonar", "Locate the correct verb signal underwater.", ["MEANING", "LISTENING"]], ["current-chase","🗺️","Reef Treasure Hunt","Find the correct picture + verb before the treasure timer ends.",["IMAGE-FIRST","ARCADE"]], ["verb-mine", "⛏️", "Verb Mine", "Classic auto-swinging claw, rocks, timing and dynamite.", ["GOLD MINER", "REASONING"]], ["verb-rush", "⏱️", "Verb Rush", "Solve increasingly difficult verb clues against the clock.", ["SPEED", "ADAPTIVE"]], ["kraken-battle", "🐙", "Kraken Battle", "Defeat the boss through meaning, spelling, contrast and context.", ["BOSS", "HEARTS"]], ["practice-mistakes", "🛠️", "Practice My Mistakes", "Target verbs flagged by the Academic Record.", ["NEEDS REVIEW", "PERSONALISED"]], ["mastery-challenge", "👑", "Mastery Challenge", "80% Theme 10 verbs, 20% cumulative retrieval, no Gem Help.", ["FINAL", "NO HELP"]]].map((g,i)=>({id:g[0],icon:g[1],title:g[2],desc:g[3],tags:g[4],index:i+1}));
 
   const $ = (id) => document.getElementById(id);
   const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
@@ -560,8 +560,130 @@
       const positions=[[26,27],[70,25],[31,67],[72,69]];shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className='blip';b.dataset.answer=o;b.textContent=o;b.style.setProperty('--x',positions[i][0]+'%');b.style.setProperty('--y',positions[i][1]+'%');b.onclick=()=>{if(feedbackLocked)return;feedbackLocked=true;const ok=acceptedAnswer(o,qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);b.classList.add(ok?'correct':'wrong');audio.sfx(ok?'correct':'wrong');setTimeout(()=>{session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();},650);};$('sonarZone').appendChild(b);});updateStats();};currentStandardNext();
   }
 
+
+  function treasureQuestion(level=tier()){
+    // Reef Treasure Hunt is deliberately current-theme-only so every option
+    // always has a real image in this Theme's words/ folder.
+    const t=TARGETS[Math.floor(Math.random()*TARGETS.length)];
+    const prompts=[
+      `Which English base verb means “${t.es}”?`,
+      `Find the picture + verb for this clue: ${t.clue}`,
+      `Which base verb matches this clue? ${t.clue}`,
+      `MASTER CLUE — choose the precise base verb: ${t.clue}`
+    ];
+    const prompt=prompts[Math.max(0,Math.min(3,level))];
+    return q(
+      prompt,
+      t.word,
+      uniqueOptions(t.word,VERB_WORDS),
+      t.word,
+      `Look closely at the four pictures.`,
+      `Spanish support: ${t.es}.`,
+      'treasure'
+    );
+  }
+
   function startCurrentChase(game){
-    createSession(game,6);currentStandardNext=()=>{const qn=generateQuestion('mixed',Math.max(1,tier()));newRoundQuestion(qn);prepareGameArea({kicker:'🐠 CURRENT CHASE',prompt:qn.prompt,sub:'Intercept the correct target. Missing a target is a gameplay miss, not an English error.',html:'<div id="currentZone" class="current-zone"></div>'});const zone=$('currentZone');let resolved=false;shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className='chase-target';b.dataset.answer=o;b.textContent=o;b.style.setProperty('--y',(58+i*84)+'px');b.style.setProperty('--d',(6.8+i*.55)+'s');b.style.animationDelay=(i*.22)+'s';b.onclick=()=>{if(resolved)return;resolved=true;const ok=acceptedAnswer(o,qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);audio.sfx(ok?'correct':'wrong');setTimeout(next,550);};b.addEventListener('animationend',()=>{if(!resolved&&acceptedAnswer(o,qn.answer)){resolved=true;session.gameplayMisses++;toast('Target passed. Timing miss — no Mastery penalty.','bad');setTimeout(next,450);}});zone.appendChild(b);});function next(){session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();}updateStats();};currentStandardNext();
+    // Compatibility: legacy id "current-chase" is retained only so existing
+    // student completion/progress is preserved. The old fast chase is retired.
+    createSession(game,6);
+    currentStandardNext=()=>{
+      // IMPORTANT: real tier() is respected. Foundation stays Foundation.
+      const qn=treasureQuestion(tier());
+      newRoundQuestion(qn);
+      const level=tier(),limits=[22,20,18,16];
+      session.remaining=limits[level]||18;
+      let resolved=false,timer=null;
+
+      prepareGameArea({
+        kicker:'🗺️ REEF TREASURE HUNT',
+        prompt:qn.prompt,
+        sub:'Find the correct picture + verb. A timeout is a gameplay miss only.',
+        html:`<div class="treasure-hunt-shell">
+          <div class="treasure-hud">
+            <b>🏝️ REEF ${session.round+1}/${session.rounds}</b>
+            <b id="treasureTimer">⏳ ${session.remaining}s</b>
+          </div>
+          <div id="treasureMap" class="treasure-map"></div>
+          <p class="treasure-note">✨ Look, think, and choose the matching treasure.</p>
+        </div>`
+      });
+
+      const map=$('treasureMap');
+      shuffle(qn.options.slice()).forEach(o=>{
+        const b=document.createElement('button');
+        b.className='treasure-target';
+        b.dataset.answer=o;
+        b.setAttribute('aria-label',`Choose ${o}`);
+        const t=target(o);
+        b.innerHTML=`<span class="treasure-spark">✨</span>
+          <span class="treasure-picture">${t?imageMarkup(t,'treasure-img'):`<b>${escapeHtml(o)}</b>`}</span>
+          <span class="treasure-word">${escapeHtml(o)}</span>
+          <span class="treasure-box">🧰</span>`;
+
+        const choose=e=>{
+          if(e){e.preventDefault();e.stopPropagation();}
+          // A Help/Guide modal must completely freeze academic interaction.
+          if(helpPause||$('modalLayer')?.classList.contains('open'))return;
+          if(resolved)return; // protects pointerdown + synthetic click double-fire.
+          resolved=true;
+          if(timer)clearInterval(timer);
+
+          const ok=acceptedAnswer(o,qn.answer);
+          recordAcademic(qn.target,ok,{
+            credit:session.creditFactor,
+            context:qn.context,
+            assisted:session.assistedThisRound
+          });
+          session.score+=ok?135*session.creditFactor:0;
+          if(!ok)session.academicMisses.push(qn.target);
+          b.classList.add(ok?'treasure-correct':'treasure-wrong');
+          if(ok)b.querySelector('.treasure-box').textContent='💎';
+          audio.sfx(ok?'correct':'wrong');
+          setTimeout(next,850);
+        };
+
+        b.addEventListener('pointerdown',choose);
+        b.addEventListener('click',choose);
+        map.appendChild(b);
+      });
+      wireImageFallback(map);
+
+      const te=$('treasureTimer');
+      timer=setInterval(()=>{
+        // Pauses for Vocabulary Guide AND every Gem Help/confirmation modal.
+        if(helpPause||$('modalLayer')?.classList.contains('open'))return;
+        session.remaining--;
+        if(te)te.textContent=`⏳ ${session.remaining}s`;
+        if(session.remaining<=0){
+          clearInterval(timer);
+          if(resolved)return;
+          resolved=true;
+          session.gameplayMisses++;
+          toast('Treasure escaped — gameplay miss only. Mastery unchanged.','bad');
+          setTimeout(next,650);
+        }
+      },1000);
+
+      actionCleanup=()=>{if(timer)clearInterval(timer);};
+
+      function next(){
+        if(timer)clearInterval(timer);
+        session.round++;
+        if(session.round>=session.rounds){
+          // Timeouts remain gameplay-only, but a child must actually answer
+          // at least 4/6 rounds to earn completion/rewards.
+          const enoughAcademicAnswers=session.attempts>=4;
+          if(enoughAcademicAnswers)finishRegularGame();
+          else finishRegularGame({
+            forceSuccess:false,
+            customTitle:'🛠️ ANSWER MORE TREASURES'
+          });
+        }else currentStandardNext();
+      }
+      updateStats();
+    };
+    currentStandardNext();
   }
 
   function startVerbRush(game){

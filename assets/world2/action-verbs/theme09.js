@@ -7,7 +7,7 @@
     world2Url: '../../world2.html',
     themeIndex: 8,
     previousThemeIndex: 7,
-    build: 'theme09-structural-restore-v1.1.0'
+    build: 'theme09-reef-v1.2.1'
   }, window.LEXICONIA_THEME09_CONFIG || {});
   const qs = new URLSearchParams(location.search);
   const PREVIEW = Boolean(CFG.forceTeacher || qs.get('preview') === 'teacher' || qs.get('teacherPreview') === '1');
@@ -128,7 +128,7 @@
     ["memory-challenge","🃏","Memory Challenge","Match 15 new action images with 15 English base verbs.",["30 CARDS", "MEMORY"]],
     ["bubble-rescue","🫧","Bubble Rescue","Pop the correct Action Verb before it escapes.",["ACTION", "SPELLING"]],
     ["submarine-sonar","🚢","Submarine Sonar","Locate the correct action signal underwater.",["ACTION", "LISTENING"]],
-    ["current-chase","🐠","Current Chase","Intercept the correct moving Action Verb target.",["ACTION", "TIMING"]],
+    ["current-chase","🗺️","Reef Treasure Hunt","Find the correct picture + verb before the treasure timer ends.",["IMAGE-FIRST","ARCADE"]],
     ["action-mine","⛏️","Action Mine","Classic auto-swinging claw, rocks, timing and dynamite.",["GOLD MINER", "REASONING"]],
     ["action-rush","⏱️","Action Rush","Solve increasingly difficult action clues against the clock.",["SPEED", "ADAPTIVE"]],
     ["kraken-battle","🐙","Kraken Battle","Defeat the boss through meaning, spelling, contrast and context.",["BOSS", "HEARTS"]],
@@ -668,8 +668,130 @@
       const positions=[[26,27],[70,25],[31,67],[72,69]];shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className='blip';b.dataset.answer=o;b.textContent=o;b.style.setProperty('--x',positions[i][0]+'%');b.style.setProperty('--y',positions[i][1]+'%');b.onclick=()=>{if(feedbackLocked)return;feedbackLocked=true;const ok=acceptedAnswer(o,qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);b.classList.add(ok?'correct':'wrong');audio.sfx(ok?'correct':'wrong');setTimeout(()=>{session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();},650);};$('sonarZone').appendChild(b);});updateStats();};currentStandardNext();
   }
 
+
+  function treasureQuestion(level=tier()){
+    // Reef Treasure Hunt is deliberately current-theme-only so every option
+    // always has a real image in this Theme's words/ folder.
+    const t=TARGETS[Math.floor(Math.random()*TARGETS.length)];
+    const prompts=[
+      `Which English base verb means “${t.es}”?`,
+      `Find the picture + verb for this clue: ${t.clue}`,
+      `Which base verb matches this clue? ${t.clue}`,
+      `MASTER CLUE — choose the precise base verb: ${t.clue}`
+    ];
+    const prompt=prompts[Math.max(0,Math.min(3,level))];
+    return q(
+      prompt,
+      t.word,
+      uniqueOptions(t.word,VERB_WORDS),
+      t.word,
+      `Look closely at the four pictures.`,
+      `Spanish support: ${t.es}.`,
+      'treasure'
+    );
+  }
+
   function startCurrentChase(game){
-    createSession(game,6);currentStandardNext=()=>{const qn=generateQuestion('mixed',Math.max(1,tier()));newRoundQuestion(qn);prepareGameArea({kicker:'🐠 CURRENT CHASE',prompt:qn.prompt,sub:'Intercept the correct target. Missing a target is a gameplay miss, not an English error.',html:'<div id="currentZone" class="current-zone"></div>'});const zone=$('currentZone');let resolved=false;shuffle(qn.options).forEach((o,i)=>{const b=document.createElement('button');b.className='chase-target';b.dataset.answer=o;b.textContent=o;b.style.setProperty('--y',(58+i*84)+'px');b.style.setProperty('--d',(6.8+i*.55)+'s');b.style.animationDelay=(i*.22)+'s';b.onclick=()=>{if(resolved)return;resolved=true;const ok=acceptedAnswer(o,qn.answer);recordAcademic(qn.target,ok,{credit:session.creditFactor,context:qn.context,assisted:session.assistedThisRound});session.score+=ok?130*session.creditFactor:0;if(!ok)session.academicMisses.push(qn.target);audio.sfx(ok?'correct':'wrong');setTimeout(next,550);};b.addEventListener('animationend',()=>{if(!resolved&&acceptedAnswer(o,qn.answer)){resolved=true;session.gameplayMisses++;toast('Target passed. Timing miss — no Mastery penalty.','bad');setTimeout(next,450);}});zone.appendChild(b);});function next(){session.round++;if(session.round>=session.rounds)finishRegularGame();else currentStandardNext();}updateStats();};currentStandardNext();
+    // Compatibility: legacy id "current-chase" is retained only so existing
+    // student completion/progress is preserved. The old fast chase is retired.
+    createSession(game,6);
+    currentStandardNext=()=>{
+      // IMPORTANT: real tier() is respected. Foundation stays Foundation.
+      const qn=treasureQuestion(tier());
+      newRoundQuestion(qn);
+      const level=tier(),limits=[22,20,18,16];
+      session.remaining=limits[level]||18;
+      let resolved=false,timer=null;
+
+      prepareGameArea({
+        kicker:'🗺️ REEF TREASURE HUNT',
+        prompt:qn.prompt,
+        sub:'Find the correct picture + verb. A timeout is a gameplay miss only.',
+        html:`<div class="treasure-hunt-shell">
+          <div class="treasure-hud">
+            <b>🏝️ REEF ${session.round+1}/${session.rounds}</b>
+            <b id="treasureTimer">⏳ ${session.remaining}s</b>
+          </div>
+          <div id="treasureMap" class="treasure-map"></div>
+          <p class="treasure-note">✨ Look, think, and choose the matching treasure.</p>
+        </div>`
+      });
+
+      const map=$('treasureMap');
+      shuffle(qn.options.slice()).forEach(o=>{
+        const b=document.createElement('button');
+        b.className='treasure-target';
+        b.dataset.answer=o;
+        b.setAttribute('aria-label',`Choose ${o}`);
+        const t=target(o);
+        b.innerHTML=`<span class="treasure-spark">✨</span>
+          <span class="treasure-picture">${t?imageMarkup(t,'treasure-img'):`<b>${escapeHtml(o)}</b>`}</span>
+          <span class="treasure-word">${escapeHtml(o)}</span>
+          <span class="treasure-box">🧰</span>`;
+
+        const choose=e=>{
+          if(e){e.preventDefault();e.stopPropagation();}
+          // A Help/Guide modal must completely freeze academic interaction.
+          if(helpPause||$('modalLayer')?.classList.contains('open'))return;
+          if(resolved)return; // protects pointerdown + synthetic click double-fire.
+          resolved=true;
+          if(timer)clearInterval(timer);
+
+          const ok=acceptedAnswer(o,qn.answer);
+          recordAcademic(qn.target,ok,{
+            credit:session.creditFactor,
+            context:qn.context,
+            assisted:session.assistedThisRound
+          });
+          session.score+=ok?135*session.creditFactor:0;
+          if(!ok)session.academicMisses.push(qn.target);
+          b.classList.add(ok?'treasure-correct':'treasure-wrong');
+          if(ok)b.querySelector('.treasure-box').textContent='💎';
+          audio.sfx(ok?'correct':'wrong');
+          setTimeout(next,850);
+        };
+
+        b.addEventListener('pointerdown',choose);
+        b.addEventListener('click',choose);
+        map.appendChild(b);
+      });
+      wireImageFallback(map);
+
+      const te=$('treasureTimer');
+      timer=setInterval(()=>{
+        // Pauses for Vocabulary Guide AND every Gem Help/confirmation modal.
+        if(helpPause||$('modalLayer')?.classList.contains('open'))return;
+        session.remaining--;
+        if(te)te.textContent=`⏳ ${session.remaining}s`;
+        if(session.remaining<=0){
+          clearInterval(timer);
+          if(resolved)return;
+          resolved=true;
+          session.gameplayMisses++;
+          toast('Treasure escaped — gameplay miss only. Mastery unchanged.','bad');
+          setTimeout(next,650);
+        }
+      },1000);
+
+      actionCleanup=()=>{if(timer)clearInterval(timer);};
+
+      function next(){
+        if(timer)clearInterval(timer);
+        session.round++;
+        if(session.round>=session.rounds){
+          // Timeouts remain gameplay-only, but a child must actually answer
+          // at least 4/6 rounds to earn completion/rewards.
+          const enoughAcademicAnswers=session.attempts>=4;
+          if(enoughAcademicAnswers)finishRegularGame();
+          else finishRegularGame({
+            forceSuccess:false,
+            customTitle:'🛠️ ANSWER MORE TREASURES'
+          });
+        }else currentStandardNext();
+      }
+      updateStats();
+    };
+    currentStandardNext();
   }
 
   function startVerbRush(game){

@@ -41,3 +41,21 @@ body{background:radial-gradient(circle at 50% 5%,rgba(87,235,190,.22),transparen
 .hero-header{background:radial-gradient(circle at 50% 0,rgba(126,255,198,.32),transparent 38%),linear-gradient(155deg,#12a991,#087b8e 58%,#064f7a)}
 .avatar{background:radial-gradient(circle at 35% 25%,#fff5b2,#4bd5a5 45%,#087282)}
 .game-card{background:linear-gradient(155deg,rgba(16,121,116,.96),rgba(4,46,72,.98))}
+
+
+/* Shared Reef Treasure Hunt — image-first replacement for retired Fishing/Current Chase */
+.treasure-hunt-shell{max-width:980px;margin:auto}.treasure-hud{display:flex;justify-content:space-between;gap:10px;padding:10px 16px;margin-bottom:12px;border:2px solid #ffe166;border-radius:16px;background:#064e78;color:#fff4ad}.treasure-map{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;min-height:500px;padding:22px;border-radius:24px;overflow:hidden;background:linear-gradient(#35d1ea,#0c8fb8 42%,#07516f);box-shadow:inset 0 -60px 80px #0004}.treasure-map:before{content:"🐚   🌿   🪸   🐚   🌿";position:absolute;left:12px;right:12px;bottom:5px;font-size:32px;letter-spacing:16px;opacity:.65;pointer-events:none}.treasure-target{position:relative;z-index:2;min-height:220px;padding:10px;border:3px solid #ffe06d;border-radius:24px;background:linear-gradient(#074062,#052748);color:#fff;display:grid;grid-template-rows:minmax(145px,1fr) auto;place-items:center;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 12px 24px #0005;transition:.16s}.treasure-target:hover,.treasure-target:focus-visible{transform:translateY(-4px) scale(1.015);outline:none}.treasure-picture{width:100%;height:100%;min-height:145px;display:grid;place-items:center;border-radius:18px;background:#fff;overflow:hidden}.treasure-picture img,.treasure-img{width:100%!important;height:100%!important;max-height:190px!important;object-fit:contain!important;object-position:center!important;pointer-events:none!important;display:block}.treasure-word{width:100%;padding:10px 8px 6px;font-size:clamp(22px,3vw,34px);font-weight:1000;text-align:center}.treasure-box{position:absolute;right:10px;bottom:8px;font-size:30px;pointer-events:none}.treasure-spark{position:absolute;left:10px;top:8px;font-size:25px;pointer-events:none;animation:treasureSpark 1s ease-in-out infinite alternate}@keyframes treasureSpark{to{transform:scale(1.35) rotate(12deg)}}.treasure-correct{border-color:#8dff99!important;background:linear-gradient(#249c55,#0b603d)!important}.treasure-wrong{border-color:#ff8a78!important;background:linear-gradient(#b93c3c,#6e1d2c)!important;animation:treasureWrong .4s ease}@keyframes treasureWrong{25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}.treasure-note{text-align:center;color:#d8f8ff;font-weight:900}body.help-paused .treasure-target{pointer-events:none}@media(max-width:760px){.treasure-map{gap:10px;padding:12px;min-height:440px}.treasure-target{min-height:190px}.treasure-picture{min-height:125px}.treasure-picture img,.treasure-img{max-height:150px!important}}@media(max-width:480px){.treasure-map{gap:8px;padding:9px;min-height:390px}.treasure-target{min-height:165px;padding:7px}.treasure-picture{min-height:105px}.treasure-picture img,.treasure-img{max-height:125px!important}.treasure-word{font-size:18px}}
+
+
+/* Reef v2 accessibility/Help fix:
+   50/50 must visibly remove and disable two treasure distractors. */
+.treasure-target.eliminated{
+  opacity:.12!important;
+  filter:grayscale(1)!important;
+  pointer-events:none!important;
+  transform:scale(.92)!important;
+  box-shadow:none!important;
+}
+.treasure-target.eliminated .treasure-word{
+  text-decoration:line-through;
+}
