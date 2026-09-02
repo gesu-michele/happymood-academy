@@ -1,0 +1,4 @@
+THEME 11 OPTIONAL AUDIO
+
+Optional human audio filenames: 01-buy.mp3 through 30-lose.mp3.
+When absent, British SpeechSynthesis is used. Audio failure never blocks the Theme.

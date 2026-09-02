@@ -1,0 +1,4 @@
+LEXICONIA THEME 12 — OPTIONAL REAL AUDIO
+
+Optional filenames mirror the PNG names with .mp3, from 01-say.mp3 to 30-order.mp3.
+If an audio file is absent, British SpeechSynthesis is used automatically.
