@@ -1,0 +1,33 @@
+LEXICONIA — THEME 14 — OPTIONAL REAL AUDIO
+If a matching MP3 is absent, British SpeechSynthesis is used automatically.
+
+01-accept.mp3
+02-refuse.mp3
+03-explain.mp3
+04-describe.mp3
+05-discuss.mp3
+06-mean.mp3
+07-expect.mp3
+08-prefer.mp3
+09-hate.mp3
+10-miss.mp3
+11-worry.mp3
+12-care.mp3
+13-trust.mp3
+14-respect.mp3
+15-support.mp3
+16-protect.mp3
+17-lead.mp3
+18-pass.mp3
+19-fail.mp3
+20-receive.mp3
+21-offer.mp3
+22-provide.mp3
+23-introduce.mp3
+24-greet.mp3
+25-thank.mp3
+26-apologize.mp3
+27-celebrate.mp3
+28-depend.mp3
+29-contact.mp3
+30-reply.mp3
