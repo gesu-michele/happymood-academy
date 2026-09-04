@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#063f67">
-<meta name="lexiconia-build" content="lexiconia-world2-water-world-theme10-final-v1">
+<meta name="lexiconia-build" content="lexiconia-world2-water-world-theme14-final-v1">
 <title>Lexiconia · World 2: Water World</title>
 <style>
 :root{
@@ -52,7 +52,7 @@ const THEMES=[
  {name:"Plants & Flowers",icon:"🌸",file:"themes/world2/01-plants-flowers.html",available:true},
  {name:"Places in Town",icon:"🏙️",file:"themes/world2/02-places-town.html",available:true},{name:"Sports",icon:"⚽",file:"themes/world2/03-sports.html",available:true},{name:"Hobbies",icon:"🎮",file:"themes/world2/04-hobbies.html",available:true},{name:"Musical Instruments",icon:"🎵",file:"themes/world2/05-musical-instruments.html",available:true},
  {name:"Toys",icon:"🎁",file:"themes/world2/06-toys.html",available:true},{name:"Days & Months",icon:"📅",file:"themes/world2/07-days-months.html",available:true},{name:"Everyday Verbs",icon:"⚡",file:"themes/world2/08-everyday-verbs.html",available:true},{name:"Action Verbs",icon:"🎯",file:"themes/world2/09-action-verbs.html",available:true},{name:"High-Frequency Verbs",icon:"🚀",file:"themes/world2/10-high-frequency-verbs.html",available:true},
- {name:"Verb Chunks",icon:"🧩"},{name:"Shapes",icon:"🔺"},{name:"Opposites",icon:"🌊"},{name:"Adjectives",icon:"✨"},{name:"Shopping",icon:"🛒"},
+ {name:"Life & Mind Verbs",icon:"🧠",file:"themes/world2/11-life-mind-verbs.html",available:true},{name:"Communication & Daily Life Verbs",icon:"💬",file:"themes/world2/12-communication-daily-life-verbs.html",available:true},{name:"Home, Routines & Everyday Tasks Verbs",icon:"🏠",file:"themes/world2/13-home-routines-everyday-tasks-verbs.html",available:true},{name:"Social Interaction & Practical Verbs",icon:"🤝",file:"themes/world2/14-social-interaction-practical-verbs.html",available:true},{name:"Shopping",icon:"🛒"},
  {name:"Celebrations",icon:"🎂"},{name:"Technology",icon:"💻"},{name:"Wild Animals",icon:"🐾"},{name:"Countries & Flags",icon:"🌎"},{name:"Review World",icon:"🚀"}
 ];
 const PROFILE_KEY="lexiconia.sprint1.profiles.v1",ACTIVE_KEY="lexiconia.active.profile.v1",W1_KEY="lexiconia.world1.fiveThemes.v1",W2_KEY="lexiconia.world2.waterWorld.v1";
@@ -65,14 +65,97 @@ function world1Save(){try{return (JSON.parse(localStorage.getItem(W1_KEY)||"{}")
 function world1Complete(){if(PREVIEW)return true;const s=world1Save();return Array.isArray(s.themeComplete)&&s.themeComplete.length>=20&&s.themeComplete.slice(0,20).every(Boolean)}
 const defaultW2={themeIndex:0,completed:Array.from({length:20},()=>[]),pending:Array.from({length:20},()=>[]),themeComplete:Array(20).fill(false),themePending:Array(20).fill(false),mastery:{},lastPlayed:Date.now()};let save={...defaultW2};
 try{const all=JSON.parse(localStorage.getItem(W2_KEY)||"{}"),old=all[heroId]||{};save={...defaultW2,...old,mastery:old.mastery||{}};save.completed=Array.from({length:20},(_,i)=>Array.isArray(old.completed?.[i])?old.completed[i]:[]);save.pending=Array.from({length:20},(_,i)=>Array.isArray(old.pending?.[i])?old.pending[i]:[]);save.themeComplete=Array.from({length:20},(_,i)=>!!old.themeComplete?.[i]);save.themePending=Array.from({length:20},(_,i)=>!!old.themePending?.[i])}catch(e){}
+
+/* GLOBAL GATING FIX v1.1
+   Source of truth:
+   - a Theme is academically qualified when themeComplete[index] is true
+     OR its saved Mastery score is >= 80.
+   - Theme N+1 unlocks only when every available prior Theme in the chain
+     is academically qualified.
+   This repairs stale themeIndex values without deleting learner progress. */
+function themeIdAt(i){
+  const file=THEMES[i]?.file||"";
+  const name=file.split("/").pop()||"";
+  return name.replace(/\.html(?:\?.*)?$/i,"").replace(/^\d{2}-/,"");
+}
+function masteryScoreAt(i){
+  const id=themeIdAt(i);
+  const raw=id?save.mastery?.[id]:0;
+  const score=Number(raw);
+  return Number.isFinite(score)?score:0;
+}
+function academicallyQualified(i){
+  if(i<0)return true;
+  return Boolean(save.themeComplete?.[i]) || masteryScoreAt(i)>=80;
+}
+function reconcileAcademicGating(){
+  let changed=false;
+
+  // Repair completion flags from already-earned Mastery records.
+  THEMES.forEach((t,i)=>{
+    if(!t?.file)return;
+    if(masteryScoreAt(i)>=80 && !save.themeComplete[i]){
+      save.themeComplete[i]=true;
+      save.themePending[i]=false;
+      changed=true;
+    }
+  });
+
+  // Rebuild the sequential frontier from academic evidence, not a stale index.
+  let frontier=0;
+  while(
+    frontier<THEMES.length &&
+    THEMES[frontier]?.available &&
+    academicallyQualified(frontier)
+  ){
+    frontier++;
+  }
+
+  const safeFrontier=Math.max(0,frontier);
+  if(Number(save.themeIndex)!==safeFrontier){
+    save.themeIndex=safeFrontier;
+    changed=true;
+  }
+
+  if(changed)persist();
+  return safeFrontier;
+}
+function sequentiallyUnlocked(i){
+  if(PREVIEW||i===0)return true;
+  for(let j=0;j<i;j++){
+    if(THEMES[j]?.available && !academicallyQualified(j))return false;
+  }
+  return true;
+}
 function persist(){if(PREVIEW)return;save.lastPlayed=Date.now();try{const all=JSON.parse(localStorage.getItem(W2_KEY)||"{}");all[heroId]=save;localStorage.setItem(W2_KEY,JSON.stringify(all))}catch(e){}}
 function economy(){const s=world1Save();return{xp:Number(s.xp)||0,gems:Number(s.gems)||0,gold:Number(s.gold)||0}}
 function rank(xp){if(xp>=20000)return"Tidal Guardian";if(xp>=12000)return"Ocean Pathfinder";if(xp>=7000)return"Coral Ranger";return"Water Explorer"}
 function updateHud(){const e=economy();$("heroName").textContent=profile?.name||"Hero";$("heroRank").textContent=rank(e.xp);$("xp").textContent=e.xp.toLocaleString();$("gems").textContent=e.gems.toLocaleString();$("gold").textContent=e.gold.toLocaleString()}
-function render(){const path=$("path");path.innerHTML="";THEMES.forEach((t,i)=>{const done=save.themeComplete[i],pending=save.themePending[i],unlocked=t.available&&(PREVIEW||i<=save.themeIndex);const b=document.createElement("button");b.className=`node ${done?"complete":pending?"pending":""} ${i===save.themeIndex&&!done&&t.available?"current":""} ${!unlocked&&!done&&!pending?"locked":""}`;b.disabled=!unlocked&&!done&&!pending;b.innerHTML=`<span class="num">${i+1}</span><span class="icon">${t.icon}</span><span class="node-name">${t.name}</span><span class="status">${done?"Restored":pending?"Pending":unlocked?"Enter":t.available?"Locked":"Coming Soon"}</span>`;b.onclick=()=>{if(t.file&&(unlocked||done||pending))location.href=previewUrl(t.file);else toast("This Theme is being prepared.")};path.appendChild(b)});const n=save.themeComplete.filter(Boolean).length;$("count").textContent=`${n} / 20 Themes`;$("fill").style.width=(n/20*100)+"%";const playable=THEMES.map((t,i)=>({t,i})).filter(({t,i})=>t.available&&(PREVIEW||i<=save.themeIndex)&&!save.themeComplete[i]);
-const preferred=playable.find(({i})=>i===save.themeIndex)||playable[playable.length-1]||null;
-const next=preferred?preferred.i:-1;
-$("continue").textContent=next>=0?`CONTINUE: ${THEMES[next].name.toUpperCase()} ➜`:"NEXT THEME COMING SOON";$("continue").disabled=next<0;$("continue").onclick=()=>{if(next>=0)location.href=previewUrl(THEMES[next].file)};updateHud();persist()}
+function render(){
+  const frontier=reconcileAcademicGating();
+  const path=$("path");path.innerHTML="";
+  THEMES.forEach((t,i)=>{
+    const done=academicallyQualified(i);
+    const pending=save.themePending[i];
+    const unlocked=Boolean(t.available)&&(PREVIEW||sequentiallyUnlocked(i));
+    const b=document.createElement("button");
+    b.className=`node ${done?"complete":pending?"pending":""} ${i===frontier&&!done&&unlocked?"current":""} ${!unlocked&&!done&&!pending?"locked":""}`;
+    b.disabled=!unlocked&&!done&&!pending;
+    b.innerHTML=`<span class="num">${i+1}</span><span class="icon">${t.icon}</span><span class="node-name">${t.name}</span><span class="status">${done?"Restored":pending?"Pending":unlocked?"Enter":t.available?"Locked":"Coming Soon"}</span>`;
+    b.onclick=()=>{if(t.file&&(unlocked||done||pending))location.href=previewUrl(t.file);else toast("This Theme is being prepared.")};
+    path.appendChild(b);
+  });
+  const n=THEMES.filter((t,i)=>t.available&&academicallyQualified(i)).length;
+  $("count").textContent=`${n} / 20 Themes`;
+  $("fill").style.width=(n/20*100)+"%";
+  const playable=THEMES.map((t,i)=>({t,i})).filter(({t,i})=>t.available&&(PREVIEW||sequentiallyUnlocked(i))&&!academicallyQualified(i));
+  const preferred=playable.find(({i})=>i===frontier)||playable[0]||null;
+  const next=preferred?preferred.i:-1;
+  $("continue").textContent=next>=0?`CONTINUE: ${THEMES[next].name.toUpperCase()} ➜`:"NEXT THEME COMING SOON";
+  $("continue").disabled=next<0;
+  $("continue").onclick=()=>{if(next>=0)location.href=previewUrl(THEMES[next].file)};
+  updateHud();persist()
+}
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1500)}
 function bubbles(){const box=$("bubbles");for(let i=0;i<38;i++){const b=document.createElement("i");b.style.setProperty("--s",(5+Math.random()*18)+"px");b.style.setProperty("--x",Math.random()*100+"%");b.style.setProperty("--d",(9+Math.random()*15)+"s");b.style.setProperty("--drift",(-55+Math.random()*110)+"px");b.style.animationDelay=(-Math.random()*18)+"s";box.appendChild(b)}}
 let musicOn=true;const track=$("musicTrack");track.volume=.18;$("music").onclick=()=>{musicOn=!musicOn;$("music").textContent=musicOn?"♫":"🔇";if(musicOn)track.play().catch(()=>{});else{track.pause();track.currentTime=0}};document.addEventListener("pointerdown",()=>{if(musicOn&&track.paused)track.play().catch(()=>{})},{once:true});$("full").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});$("backWorld1").onclick=$("gateBack").onclick=()=>location.href="world1.html";
