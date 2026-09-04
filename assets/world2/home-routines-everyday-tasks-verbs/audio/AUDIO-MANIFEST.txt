@@ -1,0 +1,5 @@
+LEXICONIA THEME 13 — OPTIONAL AUDIO
+
+Optional real British-English audio files may be added here using the same numbered filenames with .mp3.
+Example: 01-get.mp3, 04-put-on.mp3, 30-carry-out.mp3.
+If a file is absent, SpeechSynthesis en-GB is used automatically.
